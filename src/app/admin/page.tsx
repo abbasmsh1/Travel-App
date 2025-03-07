@@ -7,8 +7,9 @@ import LocationManager from '@/components/admin/LocationManager'
 import AttractionManager from '@/components/admin/AttractionManager'
 import AccommodationManager from '@/components/admin/AccommodationManager'
 import TransportationManager from '@/components/admin/TransportationManager'
+import PageManager from '@/components/admin/PageManager'
 
-type AdminTab = 'locations' | 'attractions' | 'accommodations' | 'transportation'
+type AdminTab = 'locations' | 'attractions' | 'accommodations' | 'transportation' | 'pages'
 
 export default function AdminPortal() {
   const router = useRouter()
@@ -64,6 +65,8 @@ export default function AdminPortal() {
         return <AccommodationManager />
       case 'transportation':
         return <TransportationManager />
+      case 'pages':
+        return <PageManager />
       default:
         return null
     }
@@ -120,6 +123,16 @@ export default function AdminPortal() {
                 }`}
               >
                 Transportation
+              </button>
+              <button
+                onClick={() => setActiveTab('pages')}
+                className={`px-4 py-2 rounded-lg transition-colors ${
+                  activeTab === 'pages'
+                    ? 'bg-primary text-white'
+                    : 'text-gray-600 hover:bg-gray-100'
+                }`}
+              >
+                Pages
               </button>
             </div>
           </div>
