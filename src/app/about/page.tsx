@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import Navbar from '@/src/components/Navbar'
+import Navbar from '@/components/Navbar'
 
 export default function About() {
   return (

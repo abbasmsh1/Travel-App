@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion'
 import { useParams } from 'next/navigation'
-import Navbar from '@/src/components/Navbar'
+import Navbar from '@/components/Navbar'
 import { MapPinIcon, CalendarIcon, ClockIcon } from '@heroicons/react/24/outline'
 import Link from 'next/link'
 
