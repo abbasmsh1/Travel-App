@@ -14,6 +14,12 @@ const publicRoutes = [
   '/api/auth/logout'
 ]
 
+// List of admin-only routes
+const adminRoutes = [
+  '/admin',
+  '/api/admin'
+]
+
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
@@ -33,7 +39,15 @@ export async function middleware(request: NextRequest) {
   try {
     // Verify the token
     const secret = new TextEncoder().encode(process.env.JWT_SECRET)
-    await jwtVerify(token.value, secret)
+    const { payload } = await jwtVerify(token.value, secret)
+
+    // Check if trying to access admin routes
+    if (adminRoutes.some(route => pathname.startsWith(route))) {
+      // If user is not an admin, redirect to dashboard
+      if (payload.role !== 'ADMIN') {
+        return NextResponse.redirect(new URL('/dashboard', request.url))
+      }
+    }
     
     return NextResponse.next()
   } catch (error) {

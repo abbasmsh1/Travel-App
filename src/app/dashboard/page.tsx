@@ -31,6 +31,7 @@ export default function Dashboard() {
     name: string
     email: string
     profileImage?: string
+    role?: string
   } | null>(null)
 
   useEffect(() => {
@@ -46,6 +47,12 @@ export default function Dashboard() {
         const tripsData = await tripsResponse.json()
         const preferencesData = await preferencesResponse.json()
         const userData = await userResponse.json()
+
+        // Redirect admin users to admin dashboard
+        if (userData.user.role === 'ADMIN') {
+          window.location.href = '/admin'
+          return
+        }
 
         setTrips(tripsData.trips)
         setPreferences(preferencesData)
