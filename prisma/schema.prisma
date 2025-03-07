@@ -42,11 +42,12 @@ model Location {
   imageUrl      String?
   climate       String?
   bestTimeToVisit String?
+  type          String
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   attractions   Attraction[]
   accommodations Accommodation[]
-  transportation Transportation[]
+  transportations Transportation[]
 }
 
 model Attraction {
@@ -82,15 +83,15 @@ model Accommodation {
 }
 
 model Transportation {
-  id            String    @id @default(cuid())
-  type          String    // e.g., "Bus", "Train", "Taxi"
-  description   String    @db.Text
-  baseCost      Float
-  location      Location  @relation(fields: [locationId], references: [id], onDelete: Cascade)
-  locationId    String
-  availability  Json?     // Store availability and frequency
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  id           String   @id @default(cuid())
+  type         String
+  description  String
+  baseCost     Float
+  availability Json?
+  location     Location @relation(fields: [locationId], references: [id])
+  locationId   String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }
 
 model ChatHistory {
