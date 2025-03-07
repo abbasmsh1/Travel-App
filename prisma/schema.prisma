@@ -16,10 +16,81 @@ model User {
   email         String    @unique
   password      String
   profileImage  String?   // URL to the profile image
+  bio           String?   @db.Text
+  location      String?
+  phoneNumber   String?
+  socialLinks   Json?
+  preferences   Json?
+  role          UserRole  @default(USER)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   chatHistory   ChatHistory[]
   trips         Trip[]
+}
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+model Location {
+  id            String    @id @default(cuid())
+  name          String
+  region        String
+  country       String
+  description   String    @db.Text
+  imageUrl      String?
+  climate       String?
+  bestTimeToVisit String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  attractions   Attraction[]
+  accommodations Accommodation[]
+  transportation Transportation[]
+}
+
+model Attraction {
+  id            String    @id @default(cuid())
+  name          String
+  description   String    @db.Text
+  imageUrl      String?
+  price         Float
+  duration      Int       // Duration in minutes
+  location      Location  @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  locationId    String
+  category      String    // e.g., "Historical", "Nature", "Adventure"
+  rating        Float?
+  openingHours  Json?     // Store opening hours for each day
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Accommodation {
+  id            String    @id @default(cuid())
+  name          String
+  type          String    // e.g., "Hotel", "Hostel", "Resort"
+  description   String    @db.Text
+  imageUrl      String?
+  pricePerNight Float
+  location      Location  @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  locationId    String
+  amenities     String[]
+  rating        Float?
+  contactInfo   Json?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Transportation {
+  id            String    @id @default(cuid())
+  type          String    // e.g., "Bus", "Train", "Taxi"
+  description   String    @db.Text
+  baseCost      Float
+  location      Location  @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  locationId    String
+  availability  Json?     // Store availability and frequency
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 }
 
 model ChatHistory {
