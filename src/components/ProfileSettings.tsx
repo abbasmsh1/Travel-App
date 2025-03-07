@@ -2,8 +2,9 @@
 
 import { useState, useRef } from 'react'
 import { motion } from 'framer-motion'
-import { CameraIcon, TrashIcon } from '@heroicons/react/24/outline'
+import { CameraIcon, TrashIcon, UserIcon } from '@heroicons/react/24/outline'
 import { useRouter } from 'next/navigation'
+import { toast } from 'react-hot-toast'
 
 interface ProfileSettingsProps {
   initialName: string
@@ -96,71 +97,50 @@ export default function ProfileSettings({
     }
   }
 
-  const handleProfileUpdate = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
-    setMessage(null)
 
     try {
+      // Validate passwords if attempting to change
+      if (newPassword) {
+        if (newPassword !== confirmPassword) {
+          toast.error('New passwords do not match')
+          return
+        }
+        if (newPassword.length < 8) {
+          toast.error('Password must be at least 8 characters long')
+          return
+        }
+      }
+
       const response = await fetch('/api/user/profile', {
-        method: 'PATCH',
+        method: 'PUT',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           name,
           email,
-          bio,
-          location,
-          phoneNumber,
-          socialLinks
-        })
+          currentPassword: currentPassword,
+          newPassword: newPassword || undefined,
+        }),
       })
 
-      if (!response.ok) {
-        throw new Error('Failed to update profile')
-      }
-
-      setMessage({ type: 'success', text: 'Profile updated successfully' })
-    } catch (error) {
-      setMessage({ type: 'error', text: 'Failed to update profile' })
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
-  const handlePasswordUpdate = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (newPassword !== confirmPassword) {
-      setMessage({ type: 'error', text: 'New passwords do not match' })
-      return
-    }
-
-    setIsLoading(true)
-    setMessage(null)
-
-    try {
-      const response = await fetch('/api/user/password', {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          currentPassword,
-          newPassword
-        })
-      })
+      const data = await response.json()
 
       if (!response.ok) {
-        throw new Error('Failed to update password')
+        throw new Error(data.error || 'Failed to update profile')
       }
 
+      toast.success('Profile updated successfully')
+      
+      // Clear password fields
       setCurrentPassword('')
       setNewPassword('')
       setConfirmPassword('')
-      setMessage({ type: 'success', text: 'Password updated successfully' })
     } catch (error) {
-      setMessage({ type: 'error', text: 'Failed to update password' })
+      toast.error(error instanceof Error ? error.message : 'Failed to update profile')
     } finally {
       setIsLoading(false)
     }
@@ -215,7 +195,7 @@ export default function ProfileSettings({
             />
           ) : (
             <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-              <CameraIcon className="h-12 w-12 text-gray-400" />
+              <UserIcon className="h-12 w-12 text-gray-400" />
             </div>
           )}
           <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
@@ -233,7 +213,7 @@ export default function ProfileSettings({
       </div>
 
       {/* Profile Information */}
-      <form onSubmit={handleProfileUpdate} className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label htmlFor="name" className="block text-sm font-medium text-gray-700">
@@ -325,69 +305,56 @@ export default function ProfileSettings({
           </div>
         </div>
 
+        {/* Current Password */}
+        <div>
+          <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+            Current Password
+          </label>
+          <input
+            type="password"
+            id="password"
+            value={currentPassword}
+            onChange={(e) => setCurrentPassword(e.target.value)}
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
+          />
+        </div>
+
+        {/* New Password */}
+        <div>
+          <label htmlFor="new-password" className="block text-sm font-medium text-gray-700">
+            New Password (optional)
+          </label>
+          <input
+            type="password"
+            id="new-password"
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
+            minLength={8}
+          />
+        </div>
+
+        {/* Confirm New Password */}
+        <div>
+          <label htmlFor="confirm-password" className="block text-sm font-medium text-gray-700">
+            Confirm New Password
+          </label>
+          <input
+            type="password"
+            id="confirm-password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
+            minLength={8}
+          />
+        </div>
+
         <button
           type="submit"
           disabled={isLoading}
           className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:bg-gray-400 disabled:cursor-not-allowed"
         >
           {isLoading ? 'Updating...' : 'Update Profile'}
-        </button>
-      </form>
-
-      {/* Password Change */}
-      <form onSubmit={handlePasswordUpdate} className="space-y-6">
-        <h3 className="text-lg font-medium text-gray-900">Change Password</h3>
-        
-        <div>
-          <label htmlFor="currentPassword" className="block text-sm font-medium text-gray-700">
-            Current Password
-          </label>
-          <input
-            type="password"
-            id="currentPassword"
-            value={currentPassword}
-            onChange={(e) => setCurrentPassword(e.target.value)}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
-            required
-          />
-        </div>
-
-        <div>
-          <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700">
-            New Password
-          </label>
-          <input
-            type="password"
-            id="newPassword"
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
-            required
-            minLength={8}
-          />
-        </div>
-
-        <div>
-          <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
-            Confirm New Password
-          </label>
-          <input
-            type="password"
-            id="confirmPassword"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
-            required
-            minLength={8}
-          />
-        </div>
-
-        <button
-          type="submit"
-          disabled={isLoading}
-          className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:bg-gray-400 disabled:cursor-not-allowed"
-        >
-          {isLoading ? 'Updating...' : 'Change Password'}
         </button>
       </form>
 
