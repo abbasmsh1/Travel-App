@@ -49,10 +49,48 @@ export default function PageManager() {
     try {
       const response = await fetch('/api/admin/pages')
       const data = await response.json()
-      setPages(data.pages)
+      
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to fetch pages')
+      }
+      
+      if (!Array.isArray(data.pages)) {
+        throw new Error('Invalid response format')
+      }
+      
+      // Validate each page object
+      const validatedPages = data.pages.map((page: any): PageContent => {
+        if (!page.id || !page.page || !page.title || !page.content || !Array.isArray(page.content.sections)) {
+          throw new Error('Invalid page data')
+        }
+        
+        // Validate each section
+        const validatedSections = page.content.sections.map((section: any) => {
+          if (typeof section.text !== 'string') {
+            throw new Error('Invalid section data')
+          }
+          return {
+            heading: section.heading,
+            text: section.text
+          }
+        })
+        
+        return {
+          id: page.id,
+          page: page.page,
+          title: page.title,
+          subtitle: page.subtitle,
+          content: {
+            sections: validatedSections
+          },
+          backgroundUrl: page.backgroundUrl
+        }
+      })
+      
+      setPages(validatedPages)
     } catch (error) {
       console.error('Failed to fetch pages:', error)
-      setMessage({ type: 'error', text: 'Failed to load pages' })
+      setMessage({ type: 'error', text: error instanceof Error ? error.message : 'Failed to load pages' })
     } finally {
       setIsLoading(false)
     }
