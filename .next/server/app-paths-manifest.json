@@ -1,7 +1,9 @@
 {
-  "/page": "app/page.js",
   "/contact/page": "app/contact/page.js",
   "/auth/login/page": "app/auth/login/page.js",
   "/dashboard/page": "app/dashboard/page.js",
-  "/destinations/page": "app/destinations/page.js"
+  "/auth/register/page": "app/auth/register/page.js",
+  "/admin/page": "app/admin/page.js",
+  "/api/user/profile/route": "app/api/user/profile/route.js",
+  "/api/admin/locations/route": "app/api/admin/locations/route.js"
 }

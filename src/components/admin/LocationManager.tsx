@@ -39,10 +39,36 @@ export default function LocationManager() {
     try {
       const response = await fetch('/api/admin/locations')
       const data = await response.json()
-      setLocations(data.locations)
+      
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to fetch locations')
+      }
+      
+      if (!Array.isArray(data.locations)) {
+        throw new Error('Invalid response format')
+      }
+      
+      // Validate each location object
+      const validatedLocations = data.locations.map((loc: any): Location => {
+        if (!loc.id || !loc.name || !loc.region || !loc.country || !loc.description) {
+          throw new Error('Invalid location data')
+        }
+        return {
+          id: loc.id,
+          name: loc.name,
+          region: loc.region,
+          country: loc.country,
+          description: loc.description,
+          imageUrl: loc.imageUrl,
+          climate: loc.climate,
+          bestTimeToVisit: loc.bestTimeToVisit
+        }
+      })
+      
+      setLocations(validatedLocations)
     } catch (error) {
       console.error('Failed to fetch locations:', error)
-      setMessage({ type: 'error', text: 'Failed to load locations' })
+      setMessage({ type: 'error', text: error instanceof Error ? error.message : 'Failed to load locations' })
     } finally {
       setIsLoading(false)
     }

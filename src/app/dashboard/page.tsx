@@ -22,9 +22,15 @@ interface UserPreferences {
   totalTrips: number
 }
 
+const defaultPreferences: UserPreferences = {
+  favoriteRegions: [],
+  averageTripDuration: 0,
+  totalTrips: 0
+}
+
 export default function Dashboard() {
   const [trips, setTrips] = useState<Trip[]>([])
-  const [preferences, setPreferences] = useState<UserPreferences | null>(null)
+  const [preferences, setPreferences] = useState<UserPreferences>(defaultPreferences)
   const [isLoading, setIsLoading] = useState(true)
   const [activeTab, setActiveTab] = useState<'overview' | 'profile'>('overview')
   const [userData, setUserData] = useState<{
@@ -37,15 +43,8 @@ export default function Dashboard() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch trips and preferences
-        const [tripsResponse, preferencesResponse, userResponse] = await Promise.all([
-          fetch('/api/trips'),
-          fetch('/api/preferences'),
-          fetch('/api/user/profile')
-        ])
-
-        const tripsData = await tripsResponse.json()
-        const preferencesData = await preferencesResponse.json()
+        // Fetch user profile first
+        const userResponse = await fetch('/api/user/profile')
         const userData = await userResponse.json()
 
         // Redirect admin users to admin dashboard
@@ -54,9 +53,23 @@ export default function Dashboard() {
           return
         }
 
-        setTrips(tripsData.trips)
-        setPreferences(preferencesData)
         setUserData(userData.user)
+
+        // Fetch trips and preferences
+        const [tripsResponse, preferencesResponse] = await Promise.all([
+          fetch('/api/trips'),
+          fetch('/api/preferences')
+        ])
+
+        if (tripsResponse.ok) {
+          const tripsData = await tripsResponse.json()
+          setTrips(tripsData.trips || [])
+        }
+
+        if (preferencesResponse.ok) {
+          const preferencesData = await preferencesResponse.json()
+          setPreferences(preferencesData || defaultPreferences)
+        }
       } catch (error) {
         console.error('Error fetching dashboard data:', error)
       } finally {

@@ -5,57 +5,47 @@ import prisma from '@/lib/prisma'
 
 export async function GET() {
   try {
-    // Get the token from cookies
-    const token = cookies().get('auth-token')?.value
-
+    const token = cookies().get('token')
+    
     if (!token) {
       return NextResponse.json(
-        { error: 'Unauthorized' },
+        { error: 'Not authenticated' },
         { status: 401 }
       )
     }
 
-    // Verify token
-    const decoded = jwt.verify(
-      token,
-      process.env.JWT_SECRET || 'your-jwt-secret-key'
-    ) as { userId: string }
+    const { userId } = jwt.verify(token.value, process.env.JWT_SECRET!) as { userId: string }
 
     // Get user's trips
     const trips = await prisma.trip.findMany({
-      where: {
-        userId: decoded.userId
-      }
+      where: { userId }
     })
 
-    // Calculate preferences
+    // Calculate trip statistics
     const totalTrips = trips.length
-    
-    // Calculate average trip duration
     const averageTripDuration = totalTrips > 0
       ? Math.round(
           trips.reduce((acc, trip) => {
             const start = new Date(trip.startDate)
             const end = new Date(trip.endDate)
-            const duration = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24))
-            return acc + duration
+            const days = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24))
+            return acc + days
           }, 0) / totalTrips
         )
       : 0
 
     // Calculate favorite regions
-    const regionCounts = new Map<string, number>()
-    trips.forEach(trip => {
+    const regionCounts = trips.reduce((acc: { [key: string]: number }, trip) => {
       trip.destinations.forEach(destination => {
-        const region = destination.split(',')[0].trim() // Assuming format: "City, Region"
-        regionCounts.set(region, (regionCounts.get(region) || 0) + 1)
+        acc[destination] = (acc[destination] || 0) + 1
       })
-    })
+      return acc
+    }, {})
 
-    const favoriteRegions = Array.from(regionCounts.entries())
+    const favoriteRegions = Object.entries(regionCounts)
       .map(([name, count]) => ({ name, count }))
       .sort((a, b) => b.count - a.count)
-      .slice(0, 6) // Top 6 regions
+      .slice(0, 6)
 
     return NextResponse.json({
       totalTrips,
@@ -63,9 +53,9 @@ export async function GET() {
       favoriteRegions
     })
   } catch (error) {
-    console.error('Error fetching preferences:', error)
+    console.error('Preferences fetch error:', error)
     return NextResponse.json(
-      { error: 'Failed to fetch preferences' },
+      { error: 'Internal server error' },
       { status: 500 }
     )
   }
