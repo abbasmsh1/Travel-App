@@ -2,26 +2,46 @@
 
 import { useState, useRef } from 'react'
 import { motion } from 'framer-motion'
-import { CameraIcon } from '@heroicons/react/24/outline'
+import { CameraIcon, TrashIcon } from '@heroicons/react/24/outline'
+import { useRouter } from 'next/navigation'
 
 interface ProfileSettingsProps {
   initialName: string
   initialEmail: string
   initialProfileImage?: string
+  initialBio?: string
+  initialLocation?: string
+  initialPhoneNumber?: string
+  initialSocialLinks?: {
+    instagram?: string
+    twitter?: string
+    facebook?: string
+  }
 }
 
 export default function ProfileSettings({ 
   initialName, 
   initialEmail,
-  initialProfileImage 
+  initialProfileImage,
+  initialBio = '',
+  initialLocation = '',
+  initialPhoneNumber = '',
+  initialSocialLinks = {}
 }: ProfileSettingsProps) {
+  const router = useRouter()
   const [name, setName] = useState(initialName)
   const [email, setEmail] = useState(initialEmail)
+  const [bio, setBio] = useState(initialBio)
+  const [location, setLocation] = useState(initialLocation)
+  const [phoneNumber, setPhoneNumber] = useState(initialPhoneNumber)
+  const [socialLinks, setSocialLinks] = useState(initialSocialLinks)
   const [currentPassword, setCurrentPassword] = useState('')
   const [newPassword, setNewPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [profileImage, setProfileImage] = useState(initialProfileImage)
   const [isLoading, setIsLoading] = useState(false)
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+  const [deletePassword, setDeletePassword] = useState('')
   const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -89,7 +109,11 @@ export default function ProfileSettings({
         },
         body: JSON.stringify({
           name,
-          email
+          email,
+          bio,
+          location,
+          phoneNumber,
+          socialLinks
         })
       })
 
@@ -142,6 +166,39 @@ export default function ProfileSettings({
     }
   }
 
+  const handleDeleteAccount = async () => {
+    if (!deletePassword) {
+      setMessage({ type: 'error', text: 'Please enter your password to delete account' })
+      return
+    }
+
+    setIsLoading(true)
+    setMessage(null)
+
+    try {
+      const response = await fetch('/api/user/delete', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          password: deletePassword
+        })
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to delete account')
+      }
+
+      // Redirect to home page after successful deletion
+      router.push('/')
+    } catch (error) {
+      setMessage({ type: 'error', text: 'Failed to delete account. Please check your password.' })
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   return (
     <div className="space-y-8">
       {/* Profile Picture */}
@@ -176,33 +233,96 @@ export default function ProfileSettings({
       </div>
 
       {/* Profile Information */}
-      <form onSubmit={handleProfileUpdate} className="space-y-4">
+      <form onSubmit={handleProfileUpdate} className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+              Name
+            </label>
+            <input
+              type="text"
+              id="name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
+              required
+            />
+          </div>
+
+          <div>
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+              Email
+            </label>
+            <input
+              type="email"
+              id="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
+              required
+            />
+          </div>
+
+          <div>
+            <label htmlFor="location" className="block text-sm font-medium text-gray-700">
+              Location
+            </label>
+            <input
+              type="text"
+              id="location"
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
+              placeholder="City, Country"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="phoneNumber" className="block text-sm font-medium text-gray-700">
+              Phone Number
+            </label>
+            <input
+              type="tel"
+              id="phoneNumber"
+              value={phoneNumber}
+              onChange={(e) => setPhoneNumber(e.target.value)}
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
+              placeholder="+1234567890"
+            />
+          </div>
+        </div>
+
         <div>
-          <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-            Name
+          <label htmlFor="bio" className="block text-sm font-medium text-gray-700">
+            Bio
           </label>
-          <input
-            type="text"
-            id="name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+          <textarea
+            id="bio"
+            value={bio}
+            onChange={(e) => setBio(e.target.value)}
+            rows={4}
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
-            required
+            placeholder="Tell us about yourself..."
           />
         </div>
 
         <div>
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-            Email
-          </label>
-          <input
-            type="email"
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
-            required
-          />
+          <h3 className="text-lg font-medium text-gray-900 mb-4">Social Links</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label htmlFor="instagram" className="block text-sm font-medium text-gray-700">
+                Instagram
+              </label>
+              <input
+                type="text"
+                id="instagram"
+                value={socialLinks.instagram || ''}
+                onChange={(e) => setSocialLinks({ ...socialLinks, instagram: e.target.value })}
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
+                placeholder="@username"
+              />
+            </div>
+          </div>
         </div>
 
         <button
@@ -215,7 +335,7 @@ export default function ProfileSettings({
       </form>
 
       {/* Password Change */}
-      <form onSubmit={handlePasswordUpdate} className="space-y-4">
+      <form onSubmit={handlePasswordUpdate} className="space-y-6">
         <h3 className="text-lg font-medium text-gray-900">Change Password</h3>
         
         <div>
@@ -270,6 +390,58 @@ export default function ProfileSettings({
           {isLoading ? 'Updating...' : 'Change Password'}
         </button>
       </form>
+
+      {/* Delete Account Section */}
+      <div className="border-t pt-6">
+        <h3 className="text-lg font-medium text-red-600">Delete Account</h3>
+        <p className="mt-1 text-sm text-gray-600">
+          Once you delete your account, there is no going back. Please be certain.
+        </p>
+        
+        {!showDeleteConfirm ? (
+          <button
+            onClick={() => setShowDeleteConfirm(true)}
+            className="mt-4 flex items-center text-red-600 hover:text-red-700"
+          >
+            <TrashIcon className="h-5 w-5 mr-2" />
+            Delete Account
+          </button>
+        ) : (
+          <div className="mt-4 space-y-4">
+            <div>
+              <label htmlFor="deletePassword" className="block text-sm font-medium text-gray-700">
+                Enter your password to confirm
+              </label>
+              <input
+                type="password"
+                id="deletePassword"
+                value={deletePassword}
+                onChange={(e) => setDeletePassword(e.target.value)}
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
+                required
+              />
+            </div>
+            <div className="flex space-x-4">
+              <button
+                onClick={handleDeleteAccount}
+                disabled={isLoading}
+                className="px-4 py-2 border border-transparent rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:bg-gray-400 disabled:cursor-not-allowed"
+              >
+                {isLoading ? 'Deleting...' : 'Confirm Delete'}
+              </button>
+              <button
+                onClick={() => {
+                  setShowDeleteConfirm(false)
+                  setDeletePassword('')
+                }}
+                className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
 
       {/* Status Message */}
       {message && (
