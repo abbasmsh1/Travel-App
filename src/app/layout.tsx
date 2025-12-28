@@ -18,6 +18,9 @@ const playfair = Playfair_Display({
 export const metadata: Metadata = {
   title: 'Saffarlog - Your Pakistan Travel Guide',
   description: 'Discover the beauty of Pakistan with Saffarlog. Plan your trips, explore destinations, and create unforgettable memories.',
+  icons: {
+    icon: '/logo.png',
+  },
 }
 
 export default function RootLayout({

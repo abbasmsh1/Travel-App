@@ -53,9 +53,9 @@ export default function Navbar() {
             <Image
               src="/logo.png"
               alt="Saffarlog"
-              width={180}
-              height={50}
-              className="h-12 w-auto"
+              width={300}
+              height={80}
+              className="h-24 w-auto"
             />
           </Link>
         </div>
@@ -120,9 +120,9 @@ export default function Navbar() {
               <Image
                 src="/logo.png"
                 alt="Saffarlog"
-                width={150}
-                height={40}
-                className="h-10 w-auto"
+                width={240}
+                height={64}
+                className="h-16 w-auto"
               />
               </Link>
               <button

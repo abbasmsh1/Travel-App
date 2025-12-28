@@ -41,12 +41,16 @@ export default function Home() {
     <main className="min-h-screen bg-[#0f172a]" ref={containerRef}>
       <Navbar />
       
-      {/* Hero Section with Parallax */}
+      {/* Hero Section with Multi-layer Parallax */}
       <section className="relative h-screen overflow-hidden">
-        {/* Background Image Layer */}
+        {/* Layer 1: Stars/Dust Background */}
+        <div className="absolute inset-0 z-0 bg-gradient-to-b from-[#0f172a] via-[#1e293b] to-[#334155]" />
+        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 brightness-100 mix-blend-overlay pointer-events-none z-0" />
+
+        {/* Layer 2: Distant Mountain (Main Background) */}
         <motion.div 
           style={{ scale: imageScale, y: imageY }}
-          className="absolute inset-0 z-0"
+          className="absolute inset-0 z-10"
         >
           <div className="relative w-full h-full">
             <Image
@@ -57,25 +61,60 @@ export default function Home() {
               priority
               quality={100}
             />
-            {/* Gradient Overlay for Text Readability */}
-            <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-[#0f172a]" />
           </div>
         </motion.div>
 
-        {/* Text Layer - Moves faster for parallax */}
+        {/* Layer 3: Distant Fog/Mist (Slow movement) */}
+        <motion.div 
+          style={{ 
+            y: useTransform(scrollY, [0, 500], [0, -50]),
+            opacity: useTransform(scrollY, [0, 500], [0.3, 0])
+          }}
+          className="absolute inset-0 z-20 pointer-events-none"
+        >
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0f172a]/80 via-transparent to-transparent" />
+        </motion.div>
+
+        {/* Layer 4: Close Clouds (Fast movement for parallax depth) */}
+        <motion.div 
+          style={{ 
+            y: useTransform(scrollY, [0, 500], [0, -150]),
+            x: useTransform(scrollY, [0, 500], [0, 50]),
+            scale: useTransform(scrollY, [0, 500], [1.2, 1.4]),
+            opacity: useTransform(scrollY, [0, 300], [0.4, 0])
+          }}
+          className="absolute bottom-0 left-[-10%] right-[-10%] h-[60%] z-30 pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/natural-paper.png')] opacity-20 filter blur-2xl"
+        >
+          <div className="w-full h-full bg-gradient-to-t from-[#0f172a] via-white/10 to-transparent" />
+        </motion.div>
+
+        {/* Text Layer - Moves fastest */}
         <motion.div 
           style={{ y: textY, opacity: textOpacity }}
-          className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none"
+          className="absolute inset-0 z-40 flex items-center justify-center pointer-events-none"
         >
           <div className="text-center text-white px-4">
-            <h1 className="font-display text-5xl md:text-7xl lg:text-8xl font-bold mb-6 drop-shadow-2xl tracking-tight">
+            <motion.h1 
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ duration: 1, delay: 0.5 }}
+              className="font-display text-5xl md:text-7xl lg:text-9xl font-bold mb-6 drop-shadow-[0_10px_10px_rgba(0,0,0,0.5)] tracking-tighter"
+            >
               Discover Pakistan
-            </h1>
-            <p className="text-xl md:text-3xl font-light drop-shadow-lg max-w-2xl mx-auto text-gray-100">
+            </motion.h1>
+            <motion.p 
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ duration: 1, delay: 0.8 }}
+              className="text-xl md:text-3xl font-light drop-shadow-lg max-w-3xl mx-auto text-gray-200 leading-relaxed"
+            >
               From the peaks of Karakoram to the valleys of Kashmir
-            </p>
+            </motion.p>
           </div>
         </motion.div>
+
+        {/* Global Dark Overlay for Smooth Content Transition */}
+        <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-[#0f172a] to-transparent z-50" />
       </section>
 
       {/* Destinations Section */}
