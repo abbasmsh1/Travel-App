@@ -20,14 +20,29 @@ export default function Navbar() {
   const router = useRouter()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
+  const [user, setUser] = useState<any>(null)
   
   const { scrollY } = useScroll()
+
+  const supabase = createClient()
+
+  useEffect(() => {
+    const getUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      setUser(user)
+    }
+    getUser()
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null)
+    })
+
+    return () => subscription.unsubscribe()
+  }, [])
 
   useMotionValueEvent(scrollY, "change", (latest) => {
     setIsScrolled(latest > 50)
   })
-
-  const supabase = createClient()
 
   const handleLogout = async () => {
     try {
@@ -91,16 +106,37 @@ export default function Navbar() {
         </div>
 
         <div className="hidden lg:flex lg:flex-1 lg:justify-end lg:gap-x-6">
-          <button
-            onClick={handleLogout}
-            className={`text-sm font-semibold leading-6 transition-colors ${
-              isScrolled 
-                ? 'text-gray-300 hover:text-white' 
-                : 'text-white/80 hover:text-white'
-            }`}
-          >
-            Log out
-          </button>
+          {user ? (
+            <button
+              onClick={handleLogout}
+              className={`text-sm font-semibold leading-6 transition-colors ${
+                isScrolled 
+                  ? 'text-gray-300 hover:text-white' 
+                  : 'text-white/80 hover:text-white'
+              }`}
+            >
+              Log out
+            </button>
+          ) : (
+            <div className="flex items-center gap-x-6">
+              <Link
+                href="/login"
+                className={`text-sm font-semibold leading-6 transition-colors ${
+                  isScrolled 
+                    ? 'text-gray-300 hover:text-white' 
+                    : 'text-white/80 hover:text-white'
+                }`}
+              >
+                Log in
+              </Link>
+              <Link
+                href="/register"
+                className="rounded-full bg-primary px-5 py-2 text-sm font-bold text-white shadow-lg hover:bg-primary/80 transition-all"
+              >
+                Register
+              </Link>
+            </div>
+          )}
         </div>
       </nav>
 
@@ -147,15 +183,35 @@ export default function Navbar() {
                       {item.name}
                     </Link>
                   ))}
-                  <button
-                    onClick={() => {
-                      handleLogout()
-                      setMobileMenuOpen(false)
-                    }}
-                    className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-300 hover:bg-white/5 hover:text-white text-left w-full"
-                  >
-                    Log out
-                  </button>
+                  
+                  {user ? (
+                    <button
+                      onClick={() => {
+                        handleLogout()
+                        setMobileMenuOpen(false)
+                      }}
+                      className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-300 hover:bg-white/5 hover:text-white text-left w-full"
+                    >
+                      Log out
+                    </button>
+                  ) : (
+                    <>
+                      <Link
+                        href="/login"
+                        className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-300 hover:bg-white/5 hover:text-white"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        Log in
+                      </Link>
+                      <Link
+                        href="/register"
+                        className="mt-4 block rounded-full bg-primary px-5 py-3 text-center text-sm font-bold text-white shadow-lg hover:bg-primary/80 transition-all"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        Register
+                      </Link>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
@@ -164,4 +220,5 @@ export default function Navbar() {
       )}
     </motion.header>
   )
-} 
+}
+ 

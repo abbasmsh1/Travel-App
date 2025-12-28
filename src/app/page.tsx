@@ -46,13 +46,38 @@ export default function Home() {
       
       {/* Hero Section with Multi-layer Parallax */}
       <section className="relative h-screen overflow-hidden">
-        {/* Layer 1: Stars/Dust Background */}
-        <div className="absolute inset-0 z-0 bg-gradient-to-b from-[#0f172a] via-[#1e293b] to-[#334155]" />
-        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 brightness-100 mix-blend-overlay pointer-events-none z-0" />
-
-        {/* Layer 2: Interactive K2 3D Model (Main Background) */}
+        {/* Layer 0: Stars/Space Background (Deepest) */}
         <motion.div 
-          style={{ scale: imageScale, y: imageY }}
+          style={{ 
+            y: useTransform(scrollY, [0, 500], [0, 10]),
+            scale: useTransform(scrollY, [0, 500], [1, 1.05])
+          }}
+          className="absolute inset-0 z-0 bg-gradient-to-b from-[#020617] via-[#0f172a] to-[#1e293b]"
+        />
+        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 brightness-150 mix-blend-overlay pointer-events-none z-0" />
+
+        {/* Layer 1: Distant Mountain Silhouettes */}
+        <motion.div 
+          style={{ 
+            y: useTransform(scrollY, [0, 500], [0, 50]),
+            opacity: useTransform(scrollY, [0, 500], [0.6, 0.2])
+          }}
+          className="absolute inset-0 z-5 pointer-events-none opacity-40 mix-blend-screen"
+        >
+          <Image 
+            src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1920&q=80"
+            alt="Distant Mountains"
+            fill
+            className="object-cover brightness-50 contrast-125 grayscale"
+          />
+        </motion.div>
+
+        {/* Layer 2: Interactive K2 3D Model (Main Focus) */}
+        <motion.div 
+          style={{ 
+            scale: useTransform(scrollY, [0, 500], [1.1, 1.25]),
+            y: useTransform(scrollY, [0, 500], [0, 120])
+          }}
           className="absolute inset-0 z-10"
         >
           <SketchfabEmbed 
@@ -62,31 +87,44 @@ export default function Home() {
           />
         </motion.div>
 
-        {/* Layer 3: Distant Fog/Mist (Slow movement) */}
+        {/* Layer 3: Cinematic Mist/Fog */}
         <motion.div 
           style={{ 
-            y: useTransform(scrollY, [0, 500], [0, -50]),
-            opacity: useTransform(scrollY, [0, 500], [0.3, 0])
+            y: useTransform(scrollY, [0, 500], [0, -80]),
+            opacity: useTransform(scrollY, [0, 500], [0.5, 0])
           }}
           className="absolute inset-0 z-20 pointer-events-none"
         >
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0f172a]/80 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0f172a] via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/foggy-birds.png')] opacity-10 animate-pulse" />
         </motion.div>
 
-        {/* Layer 4: Close Clouds (Fast movement for parallax depth) */}
+        {/* Layer 4: Close Moving Clouds */}
         <motion.div 
           style={{ 
-            y: useTransform(scrollY, [0, 500], [0, -150]),
-            x: useTransform(scrollY, [0, 500], [0, 50]),
-            scale: useTransform(scrollY, [0, 500], [1.2, 1.4]),
-            opacity: useTransform(scrollY, [0, 300], [0.4, 0])
+            y: useTransform(scrollY, [0, 500], [0, -200]),
+            x: useTransform(scrollY, [0, 500], [0, 80]),
+            scale: useTransform(scrollY, [0, 500], [1.2, 1.5]),
+            opacity: useTransform(scrollY, [0, 400], [0.4, 0])
           }}
-          className="absolute bottom-0 left-[-10%] right-[-10%] h-[60%] z-30 pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/natural-paper.png')] opacity-20 filter blur-2xl"
+          className="absolute bottom-0 left-[-20%] right-[-20%] h-[70%] z-30 pointer-events-none filter blur-3xl"
         >
-          <div className="w-full h-full bg-gradient-to-t from-[#0f172a] via-white/10 to-transparent" />
+          <div className="w-full h-full bg-gradient-to-t from-[#0f172a] via-white/5 to-transparent rounded-full" />
         </motion.div>
 
-        {/* Text Layer - Moves fastest */}
+        {/* Layer 5: Front Particles/Lens Flare (Fastest) */}
+        <motion.div 
+          style={{ 
+            y: useTransform(scrollY, [0, 500], [0, -400]),
+            opacity: useTransform(scrollY, [0, 300], [0.3, 0])
+          }}
+          className="absolute inset-0 z-45 pointer-events-none overflow-hidden"
+        >
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/20 rounded-full filter blur-[100px] animate-pulse" />
+          <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-blue-500/10 rounded-full filter blur-[120px] animate-bounce" />
+        </motion.div>
+
+        {/* Text Layer */}
         <motion.div 
           style={{ y: textY, opacity: textOpacity }}
           className="absolute inset-0 z-40 flex items-center justify-center pointer-events-none"
@@ -95,24 +133,24 @@ export default function Home() {
             <motion.h1 
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              transition={{ duration: 1, delay: 0.5 }}
-              className="font-display text-5xl md:text-7xl lg:text-9xl font-bold mb-6 drop-shadow-[0_10px_10px_rgba(0,0,0,0.5)] tracking-tighter"
+              transition={{ duration: 1.2, delay: 0.5, ease: "easeOut" }}
+              className="font-display text-6xl md:text-8xl lg:text-[10rem] font-bold mb-6 drop-shadow-[0_20px_20px_rgba(0,0,0,0.6)] tracking-tighter"
             >
               Discover Pakistan
             </motion.h1>
             <motion.p 
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              transition={{ duration: 1, delay: 0.8 }}
-              className="text-xl md:text-3xl font-light drop-shadow-lg max-w-3xl mx-auto text-gray-200 leading-relaxed"
+              transition={{ duration: 1.2, delay: 0.8, ease: "easeOut" }}
+              className="text-xl md:text-4xl font-light drop-shadow-xl max-w-4xl mx-auto text-gray-200 leading-relaxed tracking-wide italic"
             >
-              From the peaks of Karakoram to the valleys of Kashmir
+              Beyond the peaks, where legends breathe.
             </motion.p>
           </div>
         </motion.div>
 
-        {/* Global Dark Overlay for Smooth Content Transition */}
-        <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-[#0f172a] to-transparent z-50" />
+        {/* Bottom Fade */}
+        <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#0f172a] to-transparent z-50" />
       </section>
 
       {/* Destinations Section */}

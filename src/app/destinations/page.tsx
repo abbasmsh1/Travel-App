@@ -8,42 +8,7 @@ import { MapPinIcon, GlobeAsiaAustraliaIcon, MagnifyingGlassIcon } from '@heroic
 import Link from 'next/link'
 import Image from 'next/image'
 
-const regions = [
-  {
-    name: 'Gilgit-Baltistan',
-    description: 'Home to the world\'s highest peaks and stunning valleys',
-    image: 'https://images.unsplash.com/photo-1548685913-fe65af78d913?auto=format&fit=crop&w=800'
-  },
-  {
-    name: 'Punjab',
-    description: 'Rich cultural heritage and historical architecture',
-    image: 'https://images.unsplash.com/photo-1622543925917-09275b1747c3?auto=format&fit=crop&w=800'
-  },
-  {
-    name: 'Sindh',
-    description: 'Ancient civilizations and vibrant traditions',
-    image: 'https://images.unsplash.com/photo-1616744838636-f6c6e7552554?auto=format&fit=crop&w=800'
-  },
-  {
-    name: 'Balochistan',
-    description: 'Pristine coastlines and rugged landscapes',
-    image: 'https://images.unsplash.com/photo-1627814981888-51786576858e?auto=format&fit=crop&w=800'
-  },
-  {
-    name: 'Khyber Pakhtunkhwa',
-    description: 'Mountain valleys and rich tribal culture',
-    image: 'https://images.unsplash.com/photo-1596489360879-110bb525e933?auto=format&fit=crop&w=800'
-  }
-]
 
-const destinationTypes = [
-  { name: 'Mountains & Valleys', icon: '🏔️' },
-  { name: 'Historical Sites', icon: '🏛️' },
-  { name: 'Cultural Heritage', icon: '🏺' },
-  { name: 'Adventure Sports', icon: '🏃‍♂️' },
-  { name: 'Wildlife & Nature', icon: '🦁' },
-  { name: 'Religious Sites', icon: '🕌' }
-]
 
 import { createClient } from '@/lib/supabase/client'
 import { useEffect } from 'react'
@@ -53,21 +18,27 @@ export default function Destinations() {
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedRegion, setSelectedRegion] = useState<string | null>(null)
   const [allDestinations, setAllDestinations] = useState<any[]>([])
+  const [regions, setRegions] = useState<any[]>([])
+  const [destinationTypes, setDestinationTypes] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const supabase = createClient()
 
   useEffect(() => {
-    async function fetchDestinations() {
-      const { data, error } = await supabase
-        .from('destinations')
-        .select('*')
+    async function fetchData() {
+      setLoading(true)
+      const [destResults, regionResults, typeResults] = await Promise.all([
+        supabase.from('destinations').select('*'),
+        supabase.from('regions').select('*'),
+        supabase.from('destination_types').select('*')
+      ])
       
-      if (data) {
-        setAllDestinations(data)
-      }
+      if (destResults.data) setAllDestinations(destResults.data)
+      if (regionResults.data) setRegions(regionResults.data)
+      if (typeResults.data) setDestinationTypes(typeResults.data)
+      
       setLoading(false)
     }
-    fetchDestinations()
+    fetchData()
   }, [])
 
   const filteredDestinations = allDestinations.filter(dest => {
