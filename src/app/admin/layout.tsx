@@ -7,6 +7,8 @@ import {
   UsersIcon, 
   TagIcon, 
   CalendarIcon,
+  InformationCircleIcon,
+  PhoneIcon,
   ArrowLeftOnRectangleIcon 
 } from '@heroicons/react/24/outline'
 
@@ -74,6 +76,15 @@ export default async function AdminLayout({
           </NavLink>
           <NavLink href="/admin/tours" icon={<CalendarIcon className="w-5 h-5" />}>
             Group Tours
+          </NavLink>
+          <div className="pt-4 pb-2 px-4 text-xs font-bold text-gray-500 uppercase tracking-wider">
+            Site Content
+          </div>
+          <NavLink href="/admin/about" icon={<InformationCircleIcon className="w-5 h-5" />}>
+            About Page
+          </NavLink>
+          <NavLink href="/admin/contact" icon={<PhoneIcon className="w-5 h-5" />}>
+            Contact Info
           </NavLink>
         </nav>
 
