@@ -4,12 +4,12 @@
 
 @layer base {
   :root {
-    --background: 44 33% 95%;
-    --foreground: 200 20% 24%;
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
   }
 
   body {
-    @apply antialiased bg-[#F4F1DE] text-[#264653];
+    @apply antialiased bg-[#0f172a] text-slate-100 scroll-smooth;
   }
 }
 
@@ -17,4 +17,4 @@
   .card {
     @apply bg-white rounded-2xl shadow-lg overflow-hidden transition-transform duration-300 hover:scale-105;
   }
-} 
+}

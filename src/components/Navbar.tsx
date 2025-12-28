@@ -1,9 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { motion } from 'framer-motion'
+import { motion, useScroll, useMotionValueEvent } from 'framer-motion'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 
 const navigation = [
@@ -16,6 +16,13 @@ const navigation = [
 export default function Navbar() {
   const router = useRouter()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [isScrolled, setIsScrolled] = useState(false)
+  
+  const { scrollY } = useScroll()
+
+  useMotionValueEvent(scrollY, "change", (latest) => {
+    setIsScrolled(latest > 50)
+  })
 
   const handleLogout = async () => {
     try {
@@ -38,23 +45,30 @@ export default function Navbar() {
     <motion.header
       initial={{ y: -100 }}
       animate={{ y: 0 }}
-      className="fixed inset-x-0 top-0 z-50 bg-white/80 backdrop-blur-md"
+      className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
+        isScrolled ? 'bg-[#0f172a]/90 backdrop-blur-md shadow-lg py-3 border-b border-white/10' : 'bg-transparent py-6'
+      }`}
     >
-      <nav className="flex items-center justify-between p-6 lg:px-8" aria-label="Global">
+      <nav className="flex items-center justify-between px-6 lg:px-8" aria-label="Global">
         <div className="flex lg:flex-1">
           <Link href="/" className="-m-1.5 p-1.5">
-            <span className="font-display text-2xl font-bold text-primary">Saffarlog</span>
+            <span className="font-display text-2xl font-bold text-white tracking-wide">
+              Saffarlog
+            </span>
           </Link>
         </div>
         
         <div className="flex lg:hidden">
           <button
             type="button"
-            className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700"
+            className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 transition-colors"
             onClick={() => setMobileMenuOpen(true)}
           >
             <span className="sr-only">Open main menu</span>
-            <Bars3Icon className="h-6 w-6" aria-hidden="true" />
+            <Bars3Icon 
+              className="h-6 w-6 text-white" 
+              aria-hidden="true" 
+            />
           </button>
         </div>
 
@@ -63,7 +77,11 @@ export default function Navbar() {
             <Link
               key={item.name}
               href={item.href}
-              className="text-sm font-semibold leading-6 text-gray-900 hover:text-primary transition-colors"
+              className={`text-sm font-semibold leading-6 transition-colors ${
+                isScrolled 
+                  ? 'text-gray-300 hover:text-white' 
+                  : 'text-white/80 hover:text-white'
+              }`}
             >
               {item.name}
             </Link>
@@ -73,13 +91,21 @@ export default function Navbar() {
         <div className="hidden lg:flex lg:flex-1 lg:justify-end lg:gap-x-6">
           <button
             onClick={handleLogout}
-            className="text-sm font-semibold leading-6 text-gray-900 hover:text-primary transition-colors"
+            className={`text-sm font-semibold leading-6 transition-colors ${
+              isScrolled 
+                ? 'text-gray-300 hover:text-white' 
+                : 'text-white/80 hover:text-white'
+            }`}
           >
             Log out
           </button>
           <Link
             href="/dashboard"
-            className="text-sm font-semibold leading-6 px-4 py-2 rounded-lg bg-primary text-white hover:bg-primary/90 transition-colors"
+            className={`text-sm font-semibold leading-6 px-4 py-2 rounded-lg transition-all ${
+              isScrolled
+                ? 'bg-primary text-white hover:bg-primary/90'
+                : 'bg-white/10 text-white hover:bg-white/20 backdrop-blur-sm'
+            }`}
           >
             Dashboard
           </Link>
@@ -94,16 +120,16 @@ export default function Navbar() {
           exit={{ opacity: 0 }}
           className="fixed inset-0 z-50"
         >
-          <div className="fixed inset-0 bg-black/20 backdrop-blur-sm" aria-hidden="true" />
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" aria-hidden="true" onClick={() => setMobileMenuOpen(false)} />
           
-          <div className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-white px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
+          <div className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-[#0f172a] px-6 py-6 sm:max-w-sm border-l border-white/10 shadow-2xl">
             <div className="flex items-center justify-between">
               <Link href="/" className="-m-1.5 p-1.5">
-                <span className="font-display text-2xl font-bold text-primary">Saffarlog</span>
+                <span className="font-display text-2xl font-bold text-white">Saffarlog</span>
               </Link>
               <button
                 type="button"
-                className="-m-2.5 rounded-md p-2.5 text-gray-700"
+                className="-m-2.5 rounded-md p-2.5 text-gray-400 hover:text-white"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 <span className="sr-only">Close menu</span>
@@ -117,7 +143,7 @@ export default function Navbar() {
                     <Link
                       key={item.name}
                       href={item.href}
-                      className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                      className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-300 hover:bg-white/5 hover:text-white"
                       onClick={() => setMobileMenuOpen(false)}
                     >
                       {item.name}
@@ -128,13 +154,13 @@ export default function Navbar() {
                       handleLogout()
                       setMobileMenuOpen(false)
                     }}
-                    className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                    className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-300 hover:bg-white/5 hover:text-white text-left w-full"
                   >
                     Log out
                   </button>
                   <Link
                     href="/dashboard"
-                    className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 bg-primary text-white hover:bg-primary/90"
+                    className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 bg-primary text-white hover:bg-primary/90 mt-4 text-center"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     Dashboard

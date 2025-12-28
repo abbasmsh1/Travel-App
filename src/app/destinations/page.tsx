@@ -149,7 +149,7 @@ export default function Destinations() {
   })
 
   return (
-    <main className="min-h-screen bg-gray-50">
+    <main className="min-h-screen bg-[#0f172a] text-white">
       <Navbar />
       
       <section className="pt-32 pb-16 px-4 md:px-8 max-w-7xl mx-auto">
@@ -159,22 +159,22 @@ export default function Destinations() {
           transition={{ duration: 0.8 }}
         >
           <div className="text-center mb-12">
-            <h1 className="font-display text-4xl md:text-6xl font-bold mb-4">
+            <h1 className="font-display text-4xl md:text-6xl font-bold mb-4 drop-shadow-lg">
               Discover Pakistan
             </h1>
-            <p className="text-xl text-gray-600">
+            <p className="text-xl text-gray-300">
               Explore the diverse landscapes and rich cultural heritage
             </p>
           </div>
 
           {/* Search Bar */}
           <div className="max-w-xl mx-auto mb-12">
-            <div className="relative">
-              <MagnifyingGlassIcon className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+            <div className="relative group">
+              <MagnifyingGlassIcon className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400 group-focus-within:text-primary transition-colors" />
               <input
                 type="text"
                 placeholder="Search destinations, regions, or activities..."
-                className="w-full pl-12 pr-4 py-3 rounded-full border border-gray-200 focus:ring-2 focus:ring-primary focus:border-transparent"
+                className="w-full pl-12 pr-4 py-4 rounded-full bg-white/5 border border-white/10 focus:border-primary/50 text-white placeholder:text-gray-500 focus:ring-2 focus:ring-primary/20 backdrop-blur-sm transition-all shadow-lg hover:bg-white/10"
                 value={searchQuery}
                 onChange={(e) => {
                   setSearchQuery(e.target.value)
@@ -186,14 +186,16 @@ export default function Destinations() {
 
           {/* Tab Navigation */}
           <div className="flex justify-center mb-12">
-            <div className="inline-flex rounded-lg border border-gray-200 p-1 bg-white shadow-sm">
+            <div className="inline-flex rounded-xl border border-white/10 p-1 bg-white/5 backdrop-blur-md shadow-lg">
               <button
                 onClick={() => {
                   setActiveTab('regions')
                   setSearchQuery('')
                 }}
-                className={`flex items-center px-6 py-2.5 rounded-md text-sm font-medium transition-colors
-                  ${activeTab === 'regions' ? 'bg-primary text-white' : 'text-gray-600 hover:text-primary'}`}
+                className={`flex items-center px-6 py-2.5 rounded-lg text-sm font-medium transition-all duration-300
+                  ${activeTab === 'regions' 
+                    ? 'bg-primary text-white shadow-md' 
+                    : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
               >
                 <MapPinIcon className="h-5 w-5 mr-2" />
                 Explore by Region
@@ -204,8 +206,10 @@ export default function Destinations() {
                   setSearchQuery('')
                   setSelectedRegion(null)
                 }}
-                className={`flex items-center px-6 py-2.5 rounded-md text-sm font-medium transition-colors
-                  ${activeTab === 'types' ? 'bg-primary text-white' : 'text-gray-600 hover:text-primary'}`}
+                className={`flex items-center px-6 py-2.5 rounded-lg text-sm font-medium transition-all duration-300
+                  ${activeTab === 'types' 
+                    ? 'bg-primary text-white shadow-md' 
+                    : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
               >
                 <GlobeAsiaAustraliaIcon className="h-5 w-5 mr-2" />
                 Explore by Type
@@ -221,14 +225,14 @@ export default function Destinations() {
               transition={{ duration: 0.5 }}
               className="mb-16"
             >
-              <h2 className="font-display text-2xl font-bold mb-6">Search Results</h2>
+              <h2 className="font-display text-2xl font-bold mb-6 text-white">Search Results</h2>
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {filteredDestinations.map((destination) => (
                   <DestinationCard key={destination.id} {...destination} />
                 ))}
               </div>
               {filteredDestinations.length === 0 && (
-                <p className="text-center text-gray-500 mt-8">No destinations found matching your search.</p>
+                <p className="text-center text-gray-400 mt-8 text-lg">No destinations found matching your search.</p>
               )}
             </motion.div>
           )}
@@ -247,7 +251,7 @@ export default function Destinations() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.1 }}
-                    className="group relative h-80 rounded-2xl overflow-hidden cursor-pointer shadow-lg"
+                    className="group relative h-80 rounded-2xl overflow-hidden cursor-pointer shadow-xl border border-white/10"
                     whileHover={{ scale: 1.02 }}
                     onClick={() => setSelectedRegion(region.name)}
                   >
@@ -255,12 +259,12 @@ export default function Destinations() {
                       src={region.image}
                       alt={region.name}
                       fill
-                      className="object-cover transition-transform duration-300 group-hover:scale-110"
+                      className="object-cover transition-transform duration-500 group-hover:scale-110"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
-                    <div className="absolute bottom-0 left-0 p-6 text-white">
-                      <h3 className="font-display text-2xl font-bold mb-2">{region.name}</h3>
-                      <p className="text-sm text-gray-200">{region.description}</p>
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#0f172a] via-transparent to-transparent opacity-90" />
+                    <div className="absolute bottom-0 left-0 p-6 text-white w-full">
+                      <h3 className="font-display text-2xl font-bold mb-2 group-hover:text-primary transition-colors">{region.name}</h3>
+                      <p className="text-sm text-gray-300 line-clamp-2">{region.description}</p>
                     </div>
                   </motion.div>
                 ))}
@@ -271,13 +275,13 @@ export default function Destinations() {
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  className="mt-16"
+                  className="mt-16 pt-16 border-t border-white/10"
                 >
                   <div className="flex items-center justify-between mb-8">
-                    <h2 className="font-display text-2xl font-bold">Destinations in {selectedRegion}</h2>
+                    <h2 className="font-display text-3xl font-bold text-white">Destinations in <span className="text-primary">{selectedRegion}</span></h2>
                     <button
                       onClick={() => setSelectedRegion(null)}
-                      className="text-primary hover:text-primary/80"
+                      className="text-primary hover:text-white transition-colors bg-white/5 px-4 py-2 rounded-lg border border-white/10 hover:bg-white/10"
                     >
                       View All Regions
                     </button>
@@ -301,10 +305,10 @@ export default function Destinations() {
               className="space-y-16"
             >
               {destinationTypes.map((type, typeIndex) => (
-                <div key={type.name} className="space-y-6">
-                  <div className="flex items-center space-x-3">
-                    <span className="text-3xl">{type.icon}</span>
-                    <h2 className="font-display text-2xl font-bold">{type.name}</h2>
+                <div key={type.name} className="space-y-8 bg-white/5 rounded-3xl p-8 border border-white/10">
+                  <div className="flex items-center space-x-4 border-b border-white/10 pb-4">
+                    <span className="text-4xl">{type.icon}</span>
+                    <h2 className="font-display text-3xl font-bold text-white">{type.name}</h2>
                   </div>
                   <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {allDestinations
