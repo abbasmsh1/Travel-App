@@ -1,15 +1,33 @@
 'use client'
 
-import { useRef } from 'react'
+import { useRef, useEffect, useState } from 'react'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import Navbar from '@/components/Navbar'
 import DestinationCard from '@/components/DestinationCard'
 import SketchfabEmbed from '@/components/SketchfabEmbed'
-import { destinationsData } from '@/data/destinations'
+import { createClient } from '@/lib/supabase/client'
 
 export default function Home() {
   const containerRef = useRef<HTMLDivElement>(null)
   
+  // State for destinations
+  const [popularDestinations, setPopularDestinations] = useState<any[]>([])
+  const supabase = createClient()
+
+  useEffect(() => {
+    async function fetchDestinations() {
+      const { data } = await supabase
+        .from('destinations')
+        .select('*')
+        .limit(3)
+      
+      if (data) {
+        setPopularDestinations(data)
+      }
+    }
+    fetchDestinations()
+  }, [])
+
   // Scroll hooks for parallax effects
   const { scrollY } = useScroll()
   
@@ -74,16 +92,16 @@ export default function Home() {
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-          {Object.entries(destinationsData).map(([slug, destination], index) => (
+          {popularDestinations.map((destination, index) => (
             <motion.div
-              key={slug}
+              key={destination.id}
               initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-50px" }}
               transition={{ duration: 0.6, delay: index * 0.1 }}
             >
               <DestinationCard 
-                slug={slug}
+                slug={destination.slug}
                 name={destination.name}
                 description={destination.description}
                 image={destination.image}

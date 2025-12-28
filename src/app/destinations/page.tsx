@@ -45,94 +45,30 @@ const destinationTypes = [
   { name: 'Religious Sites', icon: '🕌' }
 ]
 
-const allDestinations = [
-  {
-    id: 1,
-    name: 'Hunza Valley',
-    description: 'Experience the majestic Karakoram mountains and ancient watchtowers.',
-    image: 'https://images.unsplash.com/photo-1548685913-fe65af78d913?auto=format&fit=crop&w=800',
-    location: 'Gilgit-Baltistan',
-    category: 'Mountains & Valleys',
-    type: ['Mountains & Valleys', 'Adventure Sports']
-  },
-  {
-    id: 2,
-    name: 'Badshahi Mosque',
-    description: 'Visit the iconic Mughal-era mosque in the heart of Lahore.',
-    image: 'https://images.unsplash.com/photo-1622543925917-09275b1747c3?auto=format&fit=crop&w=800',
-    location: 'Lahore',
-    category: 'Historical',
-    type: ['Historical Sites']
-  },
-  {
-    id: 3,
-    name: 'Deosai Plains',
-    description: 'Explore the second-highest plateau in the world.',
-    image: 'https://images.unsplash.com/photo-1552559795-c26645396e3d?auto=format&fit=crop&w=800',
-    location: 'Gilgit-Baltistan',
-    category: 'Nature',
-    type: ['Wildlife & Nature']
-  },
-  {
-    id: 4,
-    name: 'Mohenjo Daro',
-    description: 'Discover one of the largest settlements of the ancient Indus Valley Civilization.',
-    image: 'https://images.unsplash.com/photo-1605656100527-be2403164964?auto=format&fit=crop&w=800',
-    location: 'Sindh',
-    category: 'Historical',
-    type: ['Historical Sites']
-  },
-  {
-    id: 5,
-    name: 'Makran Coast',
-    description: 'Experience the pristine beaches and unique rock formations along the Arabian Sea.',
-    image: 'https://images.unsplash.com/photo-1627814981888-51786576858e?auto=format&fit=crop&w=800',
-    location: 'Balochistan',
-    category: 'Coastal',
-    type: ['Coastal']
-  },
-  {
-    id: 6,
-    name: 'Fairy Meadows',
-    description: 'Camp under the stars with a spectacular view of Nanga Parbat.',
-    image: 'https://images.unsplash.com/photo-1596489360879-110bb525e933?auto=format&fit=crop&w=800',
-    location: 'Gilgit-Baltistan',
-    category: 'Mountains & Valleys',
-    type: ['Mountains & Valleys']
-  },
-  {
-    id: 7,
-    name: 'Lahore Fort',
-    description: 'Explore the magnificent Mughal fortress and UNESCO World Heritage site.',
-    image: 'https://images.unsplash.com/photo-1599343033621-e37456d78707?auto=format&fit=crop&w=800',
-    location: 'Lahore',
-    category: 'Historical',
-    type: ['Historical Sites']
-  },
-  {
-    id: 8,
-    name: 'Hingol National Park',
-    description: 'Discover unique rock formations and diverse wildlife in Pakistan\'s largest national park.',
-    image: 'https://images.unsplash.com/photo-1517411032315-54ef2cb783bb?auto=format&fit=crop&w=800',
-    location: 'Balochistan',
-    category: 'Nature',
-    type: ['Wildlife & Nature']
-  },
-  {
-    id: 9,
-    name: 'Shalimar Gardens',
-    description: 'Walk through the historic Persian gardens built by the Mughal Empire.',
-    image: 'https://images.unsplash.com/photo-1596708709121-72f8876c2211?auto=format&fit=crop&w=800',
-    location: 'Lahore',
-    category: 'Historical',
-    type: ['Historical Sites']
-  }
-]
+import { createClient } from '@/lib/supabase/client'
+import { useEffect } from 'react'
 
 export default function Destinations() {
   const [activeTab, setActiveTab] = useState<'regions' | 'types'>('regions')
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedRegion, setSelectedRegion] = useState<string | null>(null)
+  const [allDestinations, setAllDestinations] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+  const supabase = createClient()
+
+  useEffect(() => {
+    async function fetchDestinations() {
+      const { data, error } = await supabase
+        .from('destinations')
+        .select('*')
+      
+      if (data) {
+        setAllDestinations(data)
+      }
+      setLoading(false)
+    }
+    fetchDestinations()
+  }, [])
 
   const filteredDestinations = allDestinations.filter(dest => {
     if (selectedRegion) {
