@@ -124,17 +124,20 @@ export default function Home() {
           <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-blue-500/10 rounded-full filter blur-[120px] animate-bounce" />
         </motion.div>
 
+        {/* Text Visibility Overlay (Radial gradient to darken behind text) */}
+        <div className="absolute inset-0 z-35 bg-[radial-gradient(circle_at_center,rgba(15,23,42,0.6)_0%,transparent_70%)] pointer-events-none" />
+
         {/* Text Layer */}
         <motion.div 
           style={{ y: textY, opacity: textOpacity }}
           className="absolute inset-0 z-40 flex items-center justify-center pointer-events-none"
         >
-          <div className="text-center text-white px-4">
+          <div className="text-center text-white px-8 py-12 rounded-[3rem] backdrop-blur-[2px] bg-black/10 border border-white/5 shadow-[0_0_100px_rgba(0,0,0,0.3)]">
             <motion.h1 
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 1.2, delay: 0.5, ease: "easeOut" }}
-              className="font-display text-6xl md:text-8xl lg:text-[10rem] font-bold mb-6 drop-shadow-[0_20px_20px_rgba(0,0,0,0.6)] tracking-tighter"
+              className="font-display text-6xl md:text-8xl lg:text-[10rem] font-bold mb-6 drop-shadow-[0_5px_15px_rgba(0,0,0,0.9)] drop-shadow-[0_20px_50px_rgba(0,0,0,0.6)] tracking-tighter"
             >
               Discover Pakistan
             </motion.h1>
@@ -142,7 +145,7 @@ export default function Home() {
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 1.2, delay: 0.8, ease: "easeOut" }}
-              className="text-xl md:text-4xl font-light drop-shadow-xl max-w-4xl mx-auto text-gray-200 leading-relaxed tracking-wide italic"
+              className="text-xl md:text-4xl font-light drop-shadow-[0_2px_10px_rgba(0,0,0,0.9)] max-w-4xl mx-auto text-white leading-relaxed tracking-wide italic"
             >
               Beyond the peaks, where legends breathe.
             </motion.p>
