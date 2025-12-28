@@ -1,12 +1,31 @@
-'use client'
-
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import Navbar from '@/components/Navbar'
 import Chatbot from '@/components/Chatbot'
 import { EnvelopeIcon, PhoneIcon, MapPinIcon } from '@heroicons/react/24/outline'
+import { createClient } from '@/lib/supabase/client'
 
 export default function Contact() {
+  const [content, setContent] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
+  const supabase = createClient()
+
+  useEffect(() => {
+    async function fetchContent() {
+      const { data } = await supabase
+        .from('site_content')
+        .select('content')
+        .eq('page_slug', 'contact')
+        .single()
+      
+      if (data) {
+        setContent(data.content)
+      }
+      setLoading(false)
+    }
+    fetchContent()
+  }, [])
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -21,10 +40,8 @@ export default function Contact() {
     e.preventDefault()
     setIsSubmitting(true)
     
-    // Here you would typically send the form data to your backend
-    // For now, we'll simulate a submission
     try {
-      await new Promise(resolve => setTimeout(resolve, 1500)) // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1500)) 
       setSubmitStatus('success')
       setFormData({ name: '', email: '', subject: '', message: '' })
     } catch (error) {
@@ -41,6 +58,27 @@ export default function Contact() {
     }))
   }
 
+  if (loading) {
+    return (
+      <main className="min-h-screen bg-[#0f172a] text-white">
+        <Navbar />
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+        </div>
+      </main>
+    )
+  }
+
+  const pageData = content || {
+    title: "Get in Touch",
+    subtitle: "Have questions? We'd love to hear from you.",
+    info: {
+      email: "contact@saffarlog.com",
+      phone: "+92 300 1234567",
+      address: "123 Travel Street\nIslamabad, Pakistan"
+    }
+  }
+
   return (
     <main className="min-h-screen bg-[#0f172a] text-white">
       <Navbar />
@@ -53,10 +91,10 @@ export default function Contact() {
         >
           <div className="text-center mb-12">
             <h1 className="font-display text-4xl md:text-6xl font-bold mb-4 drop-shadow-lg">
-              Get in Touch
+              {pageData.title}
             </h1>
             <p className="text-xl text-gray-300">
-              Have questions? We'd love to hear from you.
+              {pageData.subtitle}
             </p>
           </div>
 
@@ -71,7 +109,7 @@ export default function Contact() {
                 </div>
                 <div>
                   <h3 className="font-semibold mb-1 text-white">Email</h3>
-                  <p className="text-gray-300">contact@saffarlog.com</p>
+                  <p className="text-gray-300">{pageData.info.email}</p>
                 </div>
               </div>
 
@@ -81,7 +119,7 @@ export default function Contact() {
                 </div>
                 <div>
                   <h3 className="font-semibold mb-1 text-white">Phone</h3>
-                  <p className="text-gray-300">+92 300 1234567</p>
+                  <p className="text-gray-300">{pageData.info.phone}</p>
                 </div>
               </div>
 
@@ -91,9 +129,8 @@ export default function Contact() {
                 </div>
                 <div>
                   <h3 className="font-semibold mb-1 text-white">Office</h3>
-                  <p className="text-gray-300">
-                    123 Travel Street<br />
-                    Islamabad, Pakistan
+                  <p className="text-gray-300 whitespace-pre-line">
+                    {pageData.info.address}
                   </p>
                 </div>
               </div>
@@ -196,4 +233,5 @@ export default function Contact() {
       <Chatbot />
     </main>
   )
-} 
+}
+ 

@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
+import Link from 'next/link'
 
 export default async function AdminDashboard() {
   const supabase = createClient()
@@ -28,21 +29,25 @@ export default async function AdminDashboard() {
         ))}
       </div>
 
-      <div className="mt-12">
+       <div className="mt-12">
         <h2 className="text-xl font-bold text-white mb-4">Quick Actions</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-           <div className="bg-white/5 border border-white/10 p-6 rounded-2xl hover:bg-white/10 transition-colors cursor-pointer">
-              <h3 className="text-white font-bold mb-2">Add New Destination</h3>
+           <Link href="/admin/destinations/new" className="bg-white/5 border border-white/10 p-6 rounded-2xl hover:bg-white/10 transition-colors cursor-pointer group">
+              <h3 className="text-white font-bold mb-2 group-hover:text-primary transition-colors">Add New Destination</h3>
               <p className="text-gray-400 text-sm">Create a new travel destination page.</p>
-           </div>
-           <div className="bg-white/5 border border-white/10 p-6 rounded-2xl hover:bg-white/10 transition-colors cursor-pointer">
-              <h3 className="text-white font-bold mb-2">Create Package</h3>
-              <p className="text-gray-400 text-sm">Bundle destinations into a package.</p>
-           </div>
-           <div className="bg-white/5 border border-white/10 p-6 rounded-2xl hover:bg-white/10 transition-colors cursor-pointer">
-              <h3 className="text-white font-bold mb-2">Schedule Tour</h3>
-              <p className="text-gray-400 text-sm">Add a new group tour date.</p>
-           </div>
+           </Link>
+           <Link href="/admin/about" className="bg-white/5 border border-white/10 p-6 rounded-2xl hover:bg-white/10 transition-colors cursor-pointer group">
+              <h3 className="text-white font-bold mb-2 group-hover:text-primary transition-colors">Edit About Page</h3>
+              <p className="text-gray-400 text-sm">Update our heritage and history content.</p>
+           </Link>
+           <Link href="/admin/contact" className="bg-white/5 border border-white/10 p-6 rounded-2xl hover:bg-white/10 transition-colors cursor-pointer group">
+              <h3 className="text-white font-bold mb-2 group-hover:text-primary transition-colors">Edit Contact Info</h3>
+              <p className="text-gray-400 text-sm">Update email, phone, and office address.</p>
+           </Link>
+           <Link href="/admin/packages" className="bg-white/5 border border-white/10 p-6 rounded-2xl hover:bg-white/10 transition-colors cursor-pointer group">
+              <h3 className="text-white font-bold mb-2 group-hover:text-primary transition-colors">Manage Packages</h3>
+              <p className="text-gray-400 text-sm">Bundle destinations into travel deals.</p>
+           </Link>
         </div>
       </div>
     </div>
