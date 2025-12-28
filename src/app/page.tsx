@@ -56,7 +56,7 @@ export default function Home() {
         >
           <div className="relative w-full h-full">
             <Image
-              src="https://images.unsplash.com/photo-1596489360879-110bb525e933?q=80&w=3800&auto=format&fit=crop"
+              src="https://images.unsplash.com/photo-1531233076867-54794e9f7a01?q=80&w=3800&auto=format&fit=crop"
               alt="Majestic Mountain"
               fill
               className="object-cover"
