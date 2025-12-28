@@ -12,6 +12,11 @@ export default function About() {
 
   useEffect(() => {
     async function fetchContent() {
+      if (!supabase) {
+        setLoading(false)
+        return
+      }
+      
       const { data } = await supabase
         .from('site_content')
         .select('content')
@@ -24,7 +29,7 @@ export default function About() {
       setLoading(false)
     }
     fetchContent()
-  }, [])
+  }, [supabase])
 
   if (loading) {
     return (

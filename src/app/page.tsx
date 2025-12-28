@@ -17,6 +17,8 @@ export default function Home() {
 
   useEffect(() => {
     async function fetchDestinations() {
+      if (!supabase) return
+      
       const { data } = await supabase
         .from('destinations')
         .select('*')
@@ -27,7 +29,7 @@ export default function Home() {
       }
     }
     fetchDestinations()
-  }, [])
+  }, [supabase])
 
   // Scroll hooks for parallax effects
   const { scrollY } = useScroll()

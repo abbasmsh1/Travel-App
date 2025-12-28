@@ -14,6 +14,11 @@ export default function Contact() {
 
   useEffect(() => {
     async function fetchContent() {
+      if (!supabase) {
+        setLoading(false)
+        return
+      }
+
       const { data } = await supabase
         .from('site_content')
         .select('content')
@@ -26,7 +31,7 @@ export default function Contact() {
       setLoading(false)
     }
     fetchContent()
-  }, [])
+  }, [supabase])
 
   const [formData, setFormData] = useState({
     name: '',

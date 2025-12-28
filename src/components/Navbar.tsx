@@ -27,6 +27,8 @@ export default function Navbar() {
   const supabase = createClient()
 
   useEffect(() => {
+    if (!supabase) return
+
     const getUser = async () => {
       const { data: { user } } = await supabase.auth.getUser()
       setUser(user)
@@ -38,13 +40,14 @@ export default function Navbar() {
     })
 
     return () => subscription.unsubscribe()
-  }, [])
+  }, [supabase])
 
   useMotionValueEvent(scrollY, "change", (latest) => {
     setIsScrolled(latest > 50)
   })
 
   const handleLogout = async () => {
+    if (!supabase) return
     try {
       await supabase.auth.signOut()
       router.push('/login')
