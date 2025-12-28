@@ -78,7 +78,7 @@ export default function Destinations() {
       return (
         dest.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         dest.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        dest.description.toLowerCase().includes(searchQuery.toLowerCase())
+        (dest.description && dest.description.toLowerCase().includes(searchQuery.toLowerCase()))
       )
     }
     return true
@@ -95,22 +95,22 @@ export default function Destinations() {
           transition={{ duration: 0.8 }}
         >
           <div className="text-center mb-12">
-            <h1 className="font-display text-4xl md:text-6xl font-bold mb-4 drop-shadow-lg">
-              Discover Pakistan
+            <h1 className="font-display text-5xl md:text-7xl font-bold mb-4 drop-shadow-2xl">
+              Explore Destinations
             </h1>
-            <p className="text-xl text-gray-300">
-              Explore the diverse landscapes and rich cultural heritage
+            <p className="text-xl text-gray-300 max-w-2xl mx-auto leading-relaxed">
+              Find your next adventure in the breathtaking landscapes of Pakistan
             </p>
           </div>
 
           {/* Search Bar */}
           <div className="max-w-xl mx-auto mb-12">
             <div className="relative group">
-              <MagnifyingGlassIcon className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400 group-focus-within:text-primary transition-colors" />
+              <MagnifyingGlassIcon className="absolute left-5 top-1/2 transform -translate-y-1/2 h-6 w-6 text-gray-400 group-focus-within:text-primary transition-colors" />
               <input
                 type="text"
-                placeholder="Search destinations, regions, or activities..."
-                className="w-full pl-12 pr-4 py-4 rounded-full bg-white/5 border border-white/10 focus:border-primary/50 text-white placeholder:text-gray-500 focus:ring-2 focus:ring-primary/20 backdrop-blur-sm transition-all shadow-lg hover:bg-white/10"
+                placeholder="Where do you want to go?"
+                className="w-full pl-14 pr-6 py-5 rounded-full bg-white/5 border border-white/10 focus:border-primary/50 text-white placeholder:text-gray-500 focus:ring-2 focus:ring-primary/20 backdrop-blur-md transition-all shadow-2xl hover:bg-white/10"
                 value={searchQuery}
                 onChange={(e) => {
                   setSearchQuery(e.target.value)
@@ -121,20 +121,20 @@ export default function Destinations() {
           </div>
 
           {/* Tab Navigation */}
-          <div className="flex justify-center mb-12">
-            <div className="inline-flex rounded-xl border border-white/10 p-1 bg-white/5 backdrop-blur-md shadow-lg">
+          <div className="flex justify-center mb-20">
+            <div className="inline-flex rounded-2xl border border-white/10 p-1.5 bg-white/5 backdrop-blur-xl shadow-2xl">
               <button
                 onClick={() => {
                   setActiveTab('regions')
                   setSearchQuery('')
                 }}
-                className={`flex items-center px-6 py-2.5 rounded-lg text-sm font-medium transition-all duration-300
+                className={`flex items-center px-8 py-3 rounded-xl text-sm font-bold tracking-wider uppercase transition-all duration-300
                   ${activeTab === 'regions' 
-                    ? 'bg-primary text-white shadow-md' 
+                    ? 'bg-primary text-white shadow-[0_0_20px_rgba(var(--primary-rgb),0.3)]' 
                     : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
               >
-                <MapPinIcon className="h-5 w-5 mr-2" />
-                Explore by Region
+                <MapPinIcon className="h-5 w-5 mr-3" />
+                By Region
               </button>
               <button
                 onClick={() => {
@@ -142,127 +142,164 @@ export default function Destinations() {
                   setSearchQuery('')
                   setSelectedRegion(null)
                 }}
-                className={`flex items-center px-6 py-2.5 rounded-lg text-sm font-medium transition-all duration-300
+                className={`flex items-center px-8 py-3 rounded-xl text-sm font-bold tracking-wider uppercase transition-all duration-300
                   ${activeTab === 'types' 
-                    ? 'bg-primary text-white shadow-md' 
+                    ? 'bg-primary text-white shadow-[0_0_20px_rgba(var(--primary-rgb),0.3)]' 
                     : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
               >
-                <GlobeAsiaAustraliaIcon className="h-5 w-5 mr-2" />
-                Explore by Type
+                <GlobeAsiaAustraliaIcon className="h-5 w-5 mr-3" />
+                By Category
               </button>
             </div>
           </div>
 
-          {/* Search Results */}
-          {searchQuery && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.5 }}
-              className="mb-16"
-            >
-              <h2 className="font-display text-2xl font-bold mb-6 text-white">Search Results</h2>
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {filteredDestinations.map((destination) => (
-                  <DestinationCard key={destination.id} {...destination} />
-                ))}
-              </div>
-              {filteredDestinations.length === 0 && (
-                <p className="text-center text-gray-400 mt-8 text-lg">No destinations found matching your search.</p>
-              )}
-            </motion.div>
-          )}
-
-          {/* Regions View */}
-          {activeTab === 'regions' && !searchQuery && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.5 }}
-            >
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {regions.map((region, index) => (
-                  <motion.div
-                    key={region.name}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.1 }}
-                    className="group relative h-80 rounded-2xl overflow-hidden cursor-pointer shadow-xl border border-white/10"
-                    whileHover={{ scale: 1.02 }}
-                    onClick={() => setSelectedRegion(region.name)}
-                  >
-                    <Image
-                      src={region.image}
-                      alt={region.name}
-                      fill
-                      className="object-cover transition-transform duration-500 group-hover:scale-110"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#0f172a] via-transparent to-transparent opacity-90" />
-                    <div className="absolute bottom-0 left-0 p-6 text-white w-full">
-                      <h3 className="font-display text-2xl font-bold mb-2 group-hover:text-primary transition-colors">{region.name}</h3>
-                      <p className="text-sm text-gray-300 line-clamp-2">{region.description}</p>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-
-              {/* Selected Region Destinations */}
-              {selectedRegion && (
+          {loading ? (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
+              {[1, 2, 3, 4, 5, 6].map((i) => (
+                <div key={i} className="h-96 rounded-3xl bg-white/5 animate-pulse border border-white/10" />
+              ))}
+            </div>
+          ) : (
+            <>
+              {/* Search Results */}
+              {searchQuery && (
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  className="mt-16 pt-16 border-t border-white/10"
+                  transition={{ duration: 0.5 }}
                 >
-                  <div className="flex items-center justify-between mb-8">
-                    <h2 className="font-display text-3xl font-bold text-white">Destinations in <span className="text-primary">{selectedRegion}</span></h2>
-                    <button
-                      onClick={() => setSelectedRegion(null)}
-                      className="text-primary hover:text-white transition-colors bg-white/5 px-4 py-2 rounded-lg border border-white/10 hover:bg-white/10"
-                    >
-                      View All Regions
-                    </button>
-                  </div>
-                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                  <h2 className="font-display text-3xl font-bold mb-10 text-white border-l-4 border-primary pl-4">
+                    Results for "{searchQuery}"
+                  </h2>
+                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
                     {filteredDestinations.map((destination) => (
                       <DestinationCard key={destination.id} {...destination} />
                     ))}
                   </div>
+                  {filteredDestinations.length === 0 && (
+                    <div className="text-center py-20 bg-white/5 rounded-[3rem] border-2 border-dashed border-white/10">
+                      <p className="text-gray-400 text-xl font-light">No destinations found matching your search.</p>
+                    </div>
+                  )}
                 </motion.div>
               )}
-            </motion.div>
-          )}
 
-          {/* Types View */}
-          {activeTab === 'types' && !searchQuery && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.5 }}
-              className="space-y-16"
-            >
-              {destinationTypes.map((type, typeIndex) => (
-                <div key={type.name} className="space-y-8 bg-white/5 rounded-3xl p-8 border border-white/10">
-                  <div className="flex items-center space-x-4 border-b border-white/10 pb-4">
-                    <span className="text-4xl">{type.icon}</span>
-                    <h2 className="font-display text-3xl font-bold text-white">{type.name}</h2>
-                  </div>
-                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {allDestinations
-                      .filter(dest => dest.type.includes(type.name))
-                      .map((destination, index) => (
+              {/* Regions View */}
+              {activeTab === 'regions' && !searchQuery && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  {!selectedRegion ? (
+                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
+                      {regions.map((region, index) => (
                         <motion.div
-                          key={destination.id}
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
+                          key={region.name}
+                          initial={{ opacity: 0, scale: 0.95 }}
+                          animate={{ opacity: 1, scale: 1 }}
                           transition={{ delay: index * 0.1 }}
+                          className="group relative h-[28rem] rounded-[2.5rem] overflow-hidden cursor-pointer shadow-2xl border border-white/10"
+                          whileHover={{ y: -10 }}
+                          onClick={() => setSelectedRegion(region.name)}
                         >
-                          <DestinationCard {...destination} />
+                          <Image
+                            src={region.image}
+                            alt={region.name}
+                            fill
+                            className="object-cover transition-transform duration-700 group-hover:scale-110"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-[#0f172a] via-[#0f172a]/20 to-transparent opacity-90" />
+                          <div className="absolute bottom-0 left-0 p-10 text-white w-full">
+                            <h3 className="font-display text-4xl font-bold mb-3 tracking-tight group-hover:text-primary transition-colors">{region.name}</h3>
+                            <p className="text-gray-300 line-clamp-2 text-lg font-light leading-relaxed">{region.description}</p>
+                            <div className="mt-6 flex items-center text-primary font-bold text-sm uppercase tracking-widest gap-2">
+                              Explore Now <span className="group-hover:translate-x-2 transition-transform">→</span>
+                            </div>
+                          </div>
                         </motion.div>
                       ))}
-                  </div>
-                </div>
-              ))}
-            </motion.div>
+                    </div>
+                  ) : (
+                    <motion.div
+                      initial={{ opacity: 0, y: 50 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="space-y-12"
+                    >
+                      <div className="flex flex-col md:flex-row items-center justify-between gap-6 bg-white/5 p-8 rounded-[2rem] border border-white/10 shadow-xl backdrop-blur-md">
+                        <div>
+                          <h2 className="font-display text-4xl font-bold text-white mb-2">
+                            <span className="text-primary">{selectedRegion}</span>
+                          </h2>
+                          <p className="text-gray-400">Showing all destinations in this region</p>
+                        </div>
+                        <button
+                          onClick={() => setSelectedRegion(null)}
+                          className="px-8 py-4 bg-white/10 hover:bg-white/20 text-white rounded-2xl font-bold transition-all border border-white/10 backdrop-blur-md shadow-lg"
+                        >
+                          Back to Overview
+                        </button>
+                      </div>
+                      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
+                        {filteredDestinations.map((destination) => (
+                          <DestinationCard key={destination.id} {...destination} />
+                        ))}
+                      </div>
+                      {filteredDestinations.length === 0 && (
+                        <div className="text-center py-20 bg-white/5 rounded-3xl border-2 border-dashed border-white/10">
+                          <p className="text-gray-400 text-lg">New destinations coming soon!</p>
+                        </div>
+                      )}
+                    </motion.div>
+                  )}
+                </motion.div>
+              )}
+
+              {/* Types View - Dynamic mapping from Category field */}
+              {activeTab === 'types' && !searchQuery && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.5 }}
+                  className="space-y-24"
+                >
+                  {destinationTypes.map((type) => {
+                    const typeDestinations = allDestinations.filter(dest => 
+                      dest.category === type.name || (dest.type && dest.type.includes(type.name))
+                    );
+
+                    if (typeDestinations.length === 0) return null;
+
+                    return (
+                      <div key={type.name} className="space-y-12">
+                        <div className="flex items-center gap-6 border-b border-white/10 pb-6">
+                          <span className="text-6xl filter drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]">{type.icon}</span>
+                          <h2 className="font-display text-5xl font-bold text-white tracking-tight">{type.name}</h2>
+                        </div>
+                        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
+                          {typeDestinations.map((destination, index) => (
+                              <motion.div
+                                key={destination.id}
+                                initial={{ opacity: 0, y: 30 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ delay: index * 0.1 }}
+                              >
+                                <DestinationCard {...destination} />
+                              </motion.div>
+                            ))}
+                        </div>
+                      </div>
+                    );
+                  })}
+                  {allDestinations.length === 0 && (
+                     <div className="text-center py-20 bg-white/5 rounded-[3rem] border-2 border-dashed border-white/10">
+                      <p className="text-gray-400 text-xl font-light">Our database is currently updating. Stay tuned!</p>
+                    </div>
+                  )}
+                </motion.div>
+              )}
+            </>
           )}
         </motion.div>
       </section>
