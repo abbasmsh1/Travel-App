@@ -4,6 +4,7 @@ import { useRef, useEffect, useState } from 'react'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import Navbar from '@/components/Navbar'
 import DestinationCard from '@/components/DestinationCard'
+import SketchfabEmbed from '@/components/SketchfabEmbed'
 import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
 
@@ -49,21 +50,16 @@ export default function Home() {
         <div className="absolute inset-0 z-0 bg-gradient-to-b from-[#0f172a] via-[#1e293b] to-[#334155]" />
         <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 brightness-100 mix-blend-overlay pointer-events-none z-0" />
 
-        {/* Layer 2: Distant Mountain (Main Background) */}
+        {/* Layer 2: Interactive K2 3D Model (Main Background) */}
         <motion.div 
           style={{ scale: imageScale, y: imageY }}
           className="absolute inset-0 z-10"
         >
-          <div className="relative w-full h-full">
-            <Image
-              src="https://images.unsplash.com/photo-1531233076867-54794e9f7a01?q=80&w=3800&auto=format&fit=crop"
-              alt="Majestic Mountain"
-              fill
-              className="object-cover"
-              priority
-              quality={100}
-            />
-          </div>
+          <SketchfabEmbed 
+            url="https://sketchfab.com/models/593313e6f7f2475ca802175e53f4a7aa/embed"
+            title="K2 Mountain 3D"
+            className="w-full h-full"
+          />
         </motion.div>
 
         {/* Layer 3: Distant Fog/Mist (Slow movement) */}
