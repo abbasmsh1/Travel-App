@@ -1,4 +1,3 @@
-'use plain'
 'use client'
 
 import { useState } from 'react'
@@ -40,6 +39,12 @@ export default function NewDestination() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
+
+    if (!supabase) {
+      alert('Supabase is not configured. Destination cannot be created.')
+      setLoading(false)
+      return
+    }
 
     try {
       const { error } = await supabase

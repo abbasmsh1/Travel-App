@@ -1,4 +1,3 @@
-'use plain'
 'use client'
 
 import { useState } from 'react'
@@ -20,6 +19,12 @@ export default function Register() {
     e.preventDefault()
     setLoading(true)
     setError(null)
+
+    if (!supabase) {
+      setError('Supabase is not configured. Please check environment variables.')
+      setLoading(false)
+      return
+    }
 
     try {
       const { data, error: signUpError } = await supabase.auth.signUp({

@@ -25,6 +25,11 @@ export default function Destinations() {
 
   useEffect(() => {
     async function fetchData() {
+      if (!supabase) {
+        setLoading(false)
+        return
+      }
+
       setLoading(true)
       const [destResults, regionResults, typeResults] = await Promise.all([
         supabase.from('destinations').select('*'),
@@ -39,7 +44,7 @@ export default function Destinations() {
       setLoading(false)
     }
     fetchData()
-  }, [])
+  }, [supabase])
 
   const filteredDestinations = allDestinations.filter(dest => {
     if (selectedRegion) {

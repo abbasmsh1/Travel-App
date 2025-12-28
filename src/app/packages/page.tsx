@@ -14,6 +14,11 @@ export default function Packages() {
 
   useEffect(() => {
     async function fetchPackages() {
+      if (!supabase) {
+        setLoading(false)
+        return
+      }
+
       const { data, error } = await supabase
         .from('packages')
         .select('*')
@@ -28,7 +33,7 @@ export default function Packages() {
     }
 
     fetchPackages()
-  }, [])
+  }, [supabase])
 
   return (
     <main className="min-h-screen bg-[#0f172a] text-white">
