@@ -2,7 +2,9 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
+import { createClient } from '@/lib/supabase/client'
 import { motion, useScroll, useMotionValueEvent } from 'framer-motion'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 
@@ -24,17 +26,12 @@ export default function Navbar() {
     setIsScrolled(latest > 50)
   })
 
+  const supabase = createClient()
+
   const handleLogout = async () => {
     try {
-      const response = await fetch('/api/auth/logout', {
-        method: 'POST'
-      })
-
-      if (!response.ok) {
-        throw new Error('Logout failed')
-      }
-
-      router.push('/auth/login')
+      await supabase.auth.signOut()
+      router.push('/login')
       router.refresh()
     } catch (error) {
       console.error('Logout error:', error)
@@ -52,9 +49,13 @@ export default function Navbar() {
       <nav className="flex items-center justify-between px-6 lg:px-8" aria-label="Global">
         <div className="flex lg:flex-1">
           <Link href="/" className="-m-1.5 p-1.5">
-            <span className="font-display text-2xl font-bold text-white tracking-wide">
-              Saffarlog
-            </span>
+            <Image
+              src="/logo.png"
+              alt="Saffarlog"
+              width={180}
+              height={50}
+              className="h-12 w-auto"
+            />
           </Link>
         </div>
         
@@ -99,16 +100,6 @@ export default function Navbar() {
           >
             Log out
           </button>
-          <Link
-            href="/dashboard"
-            className={`text-sm font-semibold leading-6 px-4 py-2 rounded-lg transition-all ${
-              isScrolled
-                ? 'bg-primary text-white hover:bg-primary/90'
-                : 'bg-white/10 text-white hover:bg-white/20 backdrop-blur-sm'
-            }`}
-          >
-            Dashboard
-          </Link>
         </div>
       </nav>
 
@@ -125,7 +116,13 @@ export default function Navbar() {
           <div className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-[#0f172a] px-6 py-6 sm:max-w-sm border-l border-white/10 shadow-2xl">
             <div className="flex items-center justify-between">
               <Link href="/" className="-m-1.5 p-1.5">
-                <span className="font-display text-2xl font-bold text-white">Saffarlog</span>
+              <Image
+                src="/logo.png"
+                alt="Saffarlog"
+                width={150}
+                height={40}
+                className="h-10 w-auto"
+              />
               </Link>
               <button
                 type="button"
@@ -158,13 +155,6 @@ export default function Navbar() {
                   >
                     Log out
                   </button>
-                  <Link
-                    href="/dashboard"
-                    className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 bg-primary text-white hover:bg-primary/90 mt-4 text-center"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    Dashboard
-                  </Link>
                 </div>
               </div>
             </div>

@@ -43,7 +43,7 @@ export default function Register() {
               id: data.user.id,
               email: email,
               full_name: fullName,
-              role: 'user', // Default role
+              role: email === 'saffarlog@gmail.com' ? 'admin' : 'user',
             },
           ])
 

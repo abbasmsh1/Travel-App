@@ -39,8 +39,15 @@ export default async function AdminLayout({
     console.error('Error checking admin role:', err)
   }
 
-  // Optional: Redirect if not admin (commented out for development ease, or set to true)
-  // if (!isAdmin) { return <div>Unauthorized</div> }
+  // Hardcode failsafe for the specific admin email
+  if (user?.email === 'saffarlog@gmail.com') {
+    isAdmin = true
+  }
+
+  // Redirect if not admin
+  if (!isAdmin) { 
+    redirect('/') 
+  }
 
   return (
     <div className="min-h-screen bg-[#0f172a] text-white flex">
