@@ -4,7 +4,9 @@ import Link from 'next/link'
 export default async function AdminDashboard() {
   const supabase = createClient()
   
-  // Fetch stats (mocked or real if tables exist)
+  if (!supabase) {
+    return null // Layout handles the error message
+  }
   // const { count: userCount } = await supabase.from('profiles').select('*', { count: 'exact' })
   // const { count: destCount } = await supabase.from('destinations').select('*', { count: 'exact' })
 

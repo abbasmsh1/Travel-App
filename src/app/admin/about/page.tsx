@@ -14,6 +14,11 @@ export default function AdminAbout() {
 
   useEffect(() => {
     async function fetchContent() {
+      if (!supabase) {
+        setLoading(false)
+        return
+      }
+
       const { data } = await supabase
         .from('site_content')
         .select('*')
@@ -22,21 +27,45 @@ export default function AdminAbout() {
       
       if (data) {
         setContent(data.content)
+      } else {
+        // Initialize with default if empty
+        setContent({
+          heroTitle: "About Pakistan Tourism",
+          heritage: {
+            title: "Our Heritage",
+            text1: "",
+            text2: "",
+            image: ""
+          },
+          whyVisit: {
+            title: "Why Visit Pakistan?",
+            items: [
+              { title: "Adventure", description: "" },
+              { title: "Culture", description: "" },
+              { title: "Nature", description: "" }
+            ]
+          }
+        })
       }
       setLoading(false)
     }
     fetchContent()
-  }, [])
+  }, [supabase])
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (!supabase) return
+    
     setSaving(true)
     setMessage({ type: '', text: '' })
 
     const { error } = await supabase
       .from('site_content')
-      .update({ content })
-      .eq('page_slug', 'about')
+      .upsert({ 
+        page_slug: 'about',
+        content: content,
+        updated_at: new Date().toISOString()
+      }, { onConflict: 'page_slug' })
 
     if (error) {
       setMessage({ type: 'error', text: 'Failed to update content: ' + error.message })
@@ -73,8 +102,12 @@ export default function AdminAbout() {
     return <div className="p-8 text-white">Loading...</div>
   }
 
+  if (!supabase) {
+    return null // Layout handles the error message
+  }
+
   if (!content) {
-    return <div className="p-8 text-white">No content found. Please run the SQL setup script.</div>
+    return <div className="p-8 text-white">Preparing editor...</div>
   }
 
   return (

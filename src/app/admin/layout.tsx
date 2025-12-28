@@ -18,6 +18,21 @@ export default async function AdminLayout({
   children: React.ReactNode
 }) {
   const supabase = createClient()
+  
+  if (!supabase) {
+    return (
+      <div className="min-h-screen bg-[#0f172a] text-white p-8">
+        <div className="max-w-4xl mx-auto bg-red-500/10 border border-red-500/20 p-6 rounded-2xl">
+          <h1 className="text-xl font-bold text-red-400 mb-2">Supabase Configuration Missing</h1>
+          <p className="text-gray-300">
+            Please set <code className="text-primary">NEXT_PUBLIC_SUPABASE_URL</code> and 
+            <code className="text-primary">NEXT_PUBLIC_SUPABASE_ANON_KEY</code> in your environment variables.
+          </p>
+        </div>
+      </div>
+    )
+  }
+
   const { data: { user } } = await supabase.auth.getUser()
 
   if (!user) {
