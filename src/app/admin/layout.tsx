@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { 
   HomeIcon, 
   MapIcon, 
+  MapPinIcon,
   UsersIcon, 
   TagIcon, 
   CalendarIcon,
@@ -82,6 +83,9 @@ export default async function AdminLayout({
           </NavLink>
           <NavLink href="/admin/destinations" icon={<MapIcon className="w-5 h-5" />}>
             Destinations
+          </NavLink>
+          <NavLink href="/admin/regions" icon={<MapPinIcon className="w-5 h-5" />}>
+            Regions
           </NavLink>
           <NavLink href="/admin/users" icon={<UsersIcon className="w-5 h-5" />}>
             Users
