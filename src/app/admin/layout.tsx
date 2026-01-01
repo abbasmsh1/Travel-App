@@ -10,6 +10,7 @@ import {
   CalendarIcon,
   InformationCircleIcon,
   PhoneIcon,
+  ChatBubbleBottomCenterTextIcon,
   ArrowLeftOnRectangleIcon 
 } from '@heroicons/react/24/outline'
 
@@ -104,6 +105,9 @@ export default async function AdminLayout({
           </NavLink>
           <NavLink href="/admin/contact" icon={<PhoneIcon className="w-5 h-5" />}>
             Contact Info
+          </NavLink>
+          <NavLink href="/admin/submissions" icon={<ChatBubbleBottomCenterTextIcon className="w-5 h-5" />}>
+            Inquiries
           </NavLink>
         </nav>
 
