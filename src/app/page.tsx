@@ -8,7 +8,7 @@ import SketchfabEmbed from '@/components/SketchfabEmbed'
 import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
 
-import { HeroScrollDemo } from '@/components/HeroScrollDemo'
+import { AppleCardsCarousel } from '@/components/ui/apple-cards-carousel'
 
 export default function Home() {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -160,8 +160,8 @@ export default function Home() {
         <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#0f172a] to-transparent z-50" />
       </section>
 
-      {/* Hero Scroll Animation Section */}
-      <HeroScrollDemo destinations={popularDestinations} />
+      {/* Apple-style Destinations Carousel */}
+      <AppleCardsCarousel items={popularDestinations} />
 
       {/* Consolidation: Removing redundant destinations list at the bottom */}
     </main>
