@@ -8,6 +8,8 @@ import SketchfabEmbed from '@/components/SketchfabEmbed'
 import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
 
+import { HeroScrollDemo } from '@/components/HeroScrollDemo'
+
 export default function Home() {
   const containerRef = useRef<HTMLDivElement>(null)
   
@@ -157,6 +159,9 @@ export default function Home() {
         {/* Bottom Fade */}
         <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#0f172a] to-transparent z-50" />
       </section>
+
+      {/* Hero Scroll Animation Section */}
+      <HeroScrollDemo />
 
       {/* Destinations Section */}
       <section className="py-24 px-4 md:px-8 max-w-7xl mx-auto relative z-10" id="destinations">
