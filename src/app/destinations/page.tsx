@@ -7,6 +7,7 @@ import DestinationCard from '@/components/DestinationCard'
 import { MapPinIcon, GlobeAsiaAustraliaIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline'
 import Link from 'next/link'
 import Image from 'next/image'
+import Slider_01, { RuixenCardProps } from '@/components/ui/ruixen-carousel-wave'
 
 
 
@@ -78,6 +79,29 @@ export default function Destinations() {
               Find your next adventure in the breathtaking landscapes of Pakistan
             </p>
           </div>
+
+          {/* Featured Carousel */}
+          {!loading && allDestinations.length > 0 && (
+            <div className="mb-20">
+              <div className="flex items-center gap-4 mb-8">
+                <div className="h-px flex-1 bg-white/10" />
+                <h2 className="text-2xl font-display font-bold text-primary uppercase tracking-[0.2em]">Featured</h2>
+                <div className="h-px flex-1 bg-white/10" />
+              </div>
+              <Slider_01 
+                data={allDestinations.slice(0, 6).map((dest, index) => ({
+                  title: dest.name,
+                  subtitle: dest.description || 'Experience the beauty of ' + dest.location,
+                  image: dest.image,
+                  badge: { 
+                    text: dest.category?.split(' ')[0] || 'Travel', 
+                    variant: index % 3 === 0 ? 'pink' : index % 3 === 1 ? 'orange' : 'indigo' 
+                  },
+                  href: `/destinations/${dest.slug}`
+                }))} 
+              />
+            </div>
+          )}
 
           {/* Search Bar */}
           <div className="max-w-xl mx-auto mb-12">

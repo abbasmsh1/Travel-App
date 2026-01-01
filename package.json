@@ -20,7 +20,9 @@
     "@types/jsonwebtoken": "^9.0.9",
     "@types/sharp": "^0.31.1",
     "bcryptjs": "^3.0.2",
+    "clsx": "^2.1.1",
     "framer-motion": "^11.0.3",
+    "gsap": "^3.14.2",
     "jose": "^6.0.8",
     "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.562.0",
@@ -31,6 +33,7 @@
     "react-hot-toast": "^2.5.2",
     "resend": "^6.6.0",
     "sharp": "^0.33.5",
+    "tailwind-merge": "^3.4.0",
     "three": "^0.161.0"
   },
   "devDependencies": {
