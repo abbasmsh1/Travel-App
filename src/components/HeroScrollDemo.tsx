@@ -1,15 +1,19 @@
 "use client";
 import React from "react";
 import { ContainerScroll } from "@/components/ui/container-scroll-animation";
-import Image from "next/image";
+import DestinationCard from "./DestinationCard";
 
-export function HeroScrollDemo() {
+interface HeroScrollDemoProps {
+  destinations: any[];
+}
+
+export function HeroScrollDemo({ destinations }: HeroScrollDemoProps) {
   return (
     <div className="flex flex-col overflow-hidden pb-[100px] pt-20">
       <ContainerScroll
         titleComponent={
           <>
-            <h1 className="text-4xl font-semibold text-black dark:text-white">
+            <h1 className="text-4xl font-semibold text-white">
               Discover the Hidden Gems of <br />
               <span className="text-4xl md:text-[6rem] font-bold mt-1 leading-none">
                 Pakistan
@@ -18,14 +22,19 @@ export function HeroScrollDemo() {
           </>
         }
       >
-        <Image
-          src="https://images.unsplash.com/photo-1596464716127-f2a82984de30?q=80&w=2070&auto=format&fit=crop"
-          alt="Beautiful landscape of Northern Pakistan"
-          height={720}
-          width={1400}
-          className="mx-auto rounded-2xl object-cover h-full object-left-top"
-          draggable={false}
-        />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6 h-full overflow-y-auto no-scrollbar bg-black/50 backdrop-blur-sm rounded-2xl">
+          {destinations.map((destination) => (
+            <div key={destination.id} className="h-full">
+              <DestinationCard 
+                slug={destination.slug}
+                name={destination.name}
+                description={destination.description}
+                image={destination.image}
+                location={destination.location}
+              />
+            </div>
+          ))}
+        </div>
       </ContainerScroll>
     </div>
   );

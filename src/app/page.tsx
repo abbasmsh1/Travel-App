@@ -161,47 +161,9 @@ export default function Home() {
       </section>
 
       {/* Hero Scroll Animation Section */}
-      <HeroScrollDemo />
+      <HeroScrollDemo destinations={popularDestinations} />
 
-      {/* Destinations Section */}
-      <section className="py-24 px-4 md:px-8 max-w-7xl mx-auto relative z-10" id="destinations">
-        <motion.div
-           initial={{ opacity: 0, y: 50 }}
-           whileInView={{ opacity: 1, y: 0 }}
-           viewport={{ once: true, margin: "-100px" }}
-           transition={{ duration: 0.8 }}
-        >
-          <h2 className="font-display text-4xl md:text-5xl font-bold mb-16 text-center text-white drop-shadow-lg">
-            Popular Destinations
-          </h2>
-        </motion.div>
-
-        {popularDestinations.length === 0 ? (
-          <div className="text-center text-gray-400 py-12">
-            Loading destinations...
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-            {popularDestinations.map((destination, index) => (
-              <motion.div
-                key={destination.id}
-                initial={{ opacity: 0, y: 50 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-50px" }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-              >
-                <DestinationCard 
-                  slug={destination.slug}
-                  name={destination.name}
-                  description={destination.description}
-                  image={destination.image}
-                  location={destination.location}
-                />
-              </motion.div>
-            ))}
-          </div>
-        )}
-      </section>
+      {/* Consolidation: Removing redundant destinations list at the bottom */}
     </main>
   )
 } 
